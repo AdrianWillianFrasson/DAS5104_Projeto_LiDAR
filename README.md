@@ -1,1 +1,5 @@
-# DAS5104_Projeto_LiDAR
+<img src="./assets/splash.png" alt="COONTROL-UFSC" />
+
+## **Introduction**
+
+...
