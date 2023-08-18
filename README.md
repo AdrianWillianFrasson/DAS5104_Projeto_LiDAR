@@ -1,4 +1,4 @@
-<img src="./assets/splash.png" alt="COONTROL-UFSC" />
+<img src="./assets/images/splash.png" alt="COONTROL-UFSC" />
 
 ## **Introduction**
 
