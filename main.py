@@ -2,7 +2,6 @@ import sys
 import numpy as np
 
 from src.common.plot_3d import plot_3d
-from src.common.polar_to_xy import polar_to_xy
 
 sys.path.append("src")
 sys.path.append("src/common")
