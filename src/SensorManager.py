@@ -1,4 +1,5 @@
 from src.common.http_request import get
+import src.constants as constants
 
 
 class SensorManager():
@@ -10,6 +11,9 @@ class SensorManager():
 
         self.handle = ""
 
+        # Default setting...
+        self.set_parameters(scan_direction=constants.SCAN_DIRECTION)
+
     def get_parameters(self):
         return get(f"http://{self.sensor_ip}/cmd/get_parameter")
 
@@ -18,10 +22,10 @@ class SensorManager():
 
     def request_handle_udp(
         self,
-        watchdog: str = "off",  # Whether or not to use watchdog (on/off)
-        watchdog_timeout: int = 60000,  # Timeout in ms if using watchdog
-        packet_type: str = "A",
-        start_angle: int = -1800000,
+        watchdog: str = "off",  # ["on", "off"]
+        watchdogtimeout: int = 60000,  # [ms]
+        packet_type: str = "A",  # ["A", "B", "C"]
+        start_angle: int = 0,
         max_num_points_scan: int = 0,
         skip_scans: int = 0,
     ):
@@ -29,9 +33,9 @@ class SensorManager():
         params = {
             "address": self.server_ip,
             "port": self.server_port,
-            "packet_type": packet_type,
             "watchdog": watchdog,
-            "watchdogtimeout": watchdog_timeout,
+            "watchdogtimeout": watchdogtimeout,
+            "packet_type": packet_type,
             "start_angle": start_angle,
             "max_num_points_scan": max_num_points_scan,
             "skip_scans": skip_scans,
@@ -53,10 +57,10 @@ class SensorManager():
 
     def set_scanoutput_config(
         self,
-        watchdog: str = "off",  # Whether or not to use watchdog (on/off)
-        watchdog_timeout: int = 60000,  # Timeout in ms if using watchdog
-        packet_type: str = "A",
-        start_angle: int = -1800000,
+        watchdog: str = "off",  # ["on", "off"]
+        watchdogtimeout: int = 60000,  # [ms]
+        packet_type: str = "A",  # ["A", "B", "C"]
+        start_angle: int = 0,
         max_num_points_scan: int = 0,
         skip_scans: int = 0,
     ):
@@ -64,7 +68,7 @@ class SensorManager():
         params = {
             "handle": self.handle,
             "watchdog": watchdog,
-            "watchdogtimeout": watchdog_timeout,
+            "watchdogtimeout": watchdogtimeout,
             "packet_type": packet_type,
             "start_angle": start_angle,
             "max_num_points_scan": max_num_points_scan,
