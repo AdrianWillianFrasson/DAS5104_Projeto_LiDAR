@@ -1,7 +1,7 @@
 import open3d as o3d
 
 
-def plot_3d(xyz):
+def plot_point_cloud(xyz):
     """xyz: numpy-3D-matrix"""
 
     pcd = o3d.geometry.PointCloud()
