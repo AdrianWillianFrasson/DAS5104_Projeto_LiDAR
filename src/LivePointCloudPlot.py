@@ -13,11 +13,16 @@ class LivePointCloudPlot(Thread):
         self.queue = queue
 
     def run(self):
-        vis = o3d.visualization.Visualizer()
+        vis = o3d.visualization.VisualizerWithKeyCallback()
+
         vis.create_window("?", width=1080, height=720)
+        vis.register_key_callback(ord("C"), self.key_c)
+
         vis.get_render_option().point_size = 5
         self.set_view_range(vis, 450)
+
         vis.register_animation_callback(self.animation)
+
         vis.run()
         vis.destroy_window()
 
@@ -47,4 +52,7 @@ class LivePointCloudPlot(Thread):
         ]) * axis_range)
 
         vis.add_geometry(self.pcd)
+        self.pcd.points = o3d.utility.Vector3dVector([])
+
+    def key_c(self, vis):
         self.pcd.points = o3d.utility.Vector3dVector([])
