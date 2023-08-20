@@ -1,5 +1,4 @@
 import sys
-import numpy as np
 
 import src.constants as constants
 from src.SensorManager import SensorManager
@@ -30,8 +29,10 @@ def main():
 
     receiver.stop()
 
-    # xyz = np.random.rand(10000000, 3)
-    # plot_point_cloud(xyz)
+    xy = receiver.xy
+    xyz = [[xy[i][0], xy[i][1], 0] for i in range(len(xy))]
+    print(len(xyz))
+    plot_point_cloud(xyz)
 
 
 if __name__ == "__main__":
