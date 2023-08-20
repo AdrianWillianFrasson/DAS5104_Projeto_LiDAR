@@ -29,8 +29,10 @@ def main():
 
     receiver.stop()
 
-    xy = receiver.xy
-    xyz = [[xy[i][0], xy[i][1], 0] for i in range(len(xy))]
+    q = receiver.queue
+    print(q.qsize())
+    xyz = [[xy[0], xy[1], 0] for _ in range(q.qsize()) for xy in q.get()]
+    print(q.qsize())
     print(len(xyz))
     plot_point_cloud(xyz)
 

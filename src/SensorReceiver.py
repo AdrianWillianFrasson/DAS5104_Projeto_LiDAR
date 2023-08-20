@@ -1,21 +1,22 @@
 from socketserver import UDPServer, DatagramRequestHandler
 from threading import Thread
 from struct import unpack
+from queue import Queue
 
 from src.common.polar_to_xy import polar_to_xy
 
 
 class SensorReceiver(Thread):
 
-    xy = []
-
     def __init__(self, server_ip: str, server_port: int):
         super().__init__(daemon=True)
 
         self.server_ip = server_ip
         self.server_port = server_port
+        self.queue = Queue()
 
         self.server_udp = UDPServer((server_ip, server_port), self.Handler)
+        self.server_udp.queue = self.queue
 
     def stop(self):
         self.server_udp.shutdown()
@@ -71,5 +72,4 @@ class SensorReceiver(Thread):
             payload = data[header_size:]  # list[uint32] - 4byte
             distances = unpack(f"{len(payload) // 4}I", payload[:len(payload) // 4 * 4])
 
-            xy = polar_to_xy(distances, first_angle, angular_increment)
-            SensorReceiver.xy.extend(xy)
+            self.server.queue.put(polar_to_xy(distances, first_angle, angular_increment))
