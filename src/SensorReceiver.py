@@ -27,7 +27,6 @@ class SensorReceiver(Thread):
     class Handler(DatagramRequestHandler):
 
         def handle(self):
-            address = self.client_address[0]
             data = self.rfile.read()
 
             if len(data) <= 10:
@@ -38,7 +37,7 @@ class SensorReceiver(Thread):
             # packet_type = unpack("H", data[2:4])[0]
             packet_size = unpack("I", data[4:8])[0]
             header_size = unpack("H", data[8:10])[0]
-            scan_number = unpack("H", data[10:12])[0]
+            # scan_number = unpack("H", data[10:12])[0]
             # packet_number = unpack("H", data[12:14])[0]
             # timestamp_raw = ...
             # timestamp_sync = ...
@@ -54,7 +53,7 @@ class SensorReceiver(Thread):
             # print(f"packet_type: {hex(packet_type)}")
             # print(f"packet_size: {packet_size}")
             # print(f"header_size: {header_size}")
-            print(f"scan_number: {scan_number}")
+            # print(f"scan_number: {scan_number}")
             # print(f"packet_number: {packet_number}")
             # print(f"status_flags: {status_flags}")
             # print(f"scan_frequency: {scan_frequency}")
@@ -72,4 +71,7 @@ class SensorReceiver(Thread):
             payload = data[header_size:]  # list[uint32] - 4byte
             distances = unpack(f"{len(payload) // 4}I", payload[:len(payload) // 4 * 4])
 
-            self.server.queue.put(polar_to_xy(distances, first_angle, angular_increment))
+            self.server.queue.put({
+                "address": self.client_address[0],
+                "xy": polar_to_xy(distances, first_angle, angular_increment),
+            })
