@@ -19,7 +19,7 @@ class LivePointCloudPlot(Thread):
         vis.register_key_callback(ord("C"), self.key_c)
 
         vis.get_render_option().point_size = 5
-        self.set_view_range(vis, 450)
+        self.set_view_range(vis, 1500)
 
         vis.register_animation_callback(self.animation)
 
