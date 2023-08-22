@@ -23,21 +23,26 @@ def main():
     # print(json.dumps(sensor_top.get_parameters(), sort_keys=True, indent=4))
 
     receiver = SensorReceiver("192.168.80.112", constants.SERVER_PORT)
-    plot = LivePointCloudPlot(receiver.queue)
+    plotter = LivePointCloudPlot(receiver.queue)
 
-    plot.start()
+    plotter.start()
     receiver.start()
 
     # print(sensor_top.request_handle_udp(max_num_points_scan=300, skip_scans=30))
     # print(sensor_top.start_scanoutput())
 
     # sleep(1)
-    input("press any key to stop...")
+    input("press any key to stop receiver...")
 
     # print(sensor_top.stop_scanoutput())
     # print(sensor_top.release_handle())
 
     receiver.stop()
+
+    input("press any key to stop plotter...")
+
+    plotter.stop()
+    print(receiver.queue.qsize())
 
     # q = receiver.queue
     # print(q.qsize())
