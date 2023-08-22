@@ -1,15 +1,14 @@
 from threading import Thread
-from queue import Queue
-from time import sleep
 import open3d as o3d
 import numpy as np
+
+from src.SafeList import SafeList
 
 
 class LivePointCloudPlot(Thread):
 
-    def __init__(self, queue: Queue):
+    def __init__(self, queue: SafeList):
         super().__init__(daemon=True)
-
         self.queue = queue
 
     def run(self):
@@ -17,6 +16,7 @@ class LivePointCloudPlot(Thread):
 
         vis.create_window("?", width=1080, height=720)
         vis.register_key_callback(ord("C"), self.key_c)
+        vis.register_key_callback(ord("V"), self.key_v)
 
         vis.get_render_option().point_size = 5
         self.set_view_range(vis, 1500)
@@ -27,20 +27,20 @@ class LivePointCloudPlot(Thread):
         vis.destroy_window()
 
     def animation(self, vis):
-        try:
-            data = self.queue.get(False)["xy"]
-            self.pcd.points = o3d.utility.Vector3dVector(np.concatenate((
-                np.asarray(self.pcd.points),
-                [[xy[0], xy[1], 0] for xy in data]
-            )))
+        data = self.queue.get_all()
 
-            vis.update_geometry(self.pcd)
-            # vis.poll_events()
-            # vis.update_renderer()
-            sleep(0.0)
+        if not len(data):
+            return
 
-        except Exception:
-            sleep(0.0)
+        self.pcd.points = o3d.utility.Vector3dVector(np.concatenate((
+            np.asarray(self.pcd.points),
+            [[xy[0], xy[1], 0] for points in data for xy in points["xy"]]
+        )))
+
+        print(self.queue.size())
+        vis.update_geometry(self.pcd)
+        # vis.poll_events()
+        # vis.update_renderer()
 
     def set_view_range(self, vis, axis_range: int):
         self.pcd = o3d.geometry.PointCloud()
@@ -56,3 +56,6 @@ class LivePointCloudPlot(Thread):
 
     def key_c(self, vis):
         self.pcd.points = o3d.utility.Vector3dVector([])
+
+    def key_v(self, vis):
+        print(np.asarray(self.pcd.points).shape)

@@ -1,9 +1,9 @@
 from socketserver import UDPServer, DatagramRequestHandler
 from threading import Thread
 from struct import unpack
-from queue import Queue
 
 from src.common.polar_to_xy import polar_to_xy
+from src.SafeList import SafeList
 
 
 class SensorReceiver(Thread):
@@ -13,7 +13,7 @@ class SensorReceiver(Thread):
 
         self.server_ip = server_ip
         self.server_port = server_port
-        self.queue = Queue()
+        self.queue = SafeList()
 
         self.server_udp = UDPServer((server_ip, server_port), self.Handler)
         self.server_udp.queue = self.queue
