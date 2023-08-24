@@ -1,5 +1,8 @@
 **/__pycache__/
 **/.vscode/
+**/target/
 **/.idea/
 **/venv/
 **/env/
+
+Cargo.lock
