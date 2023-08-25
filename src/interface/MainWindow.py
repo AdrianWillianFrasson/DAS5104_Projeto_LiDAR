@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QMainWindow
-from src.interface.main_window_ui import Ui_MainWindow
+from src.interface.MainWindow_ui import Ui_MainWindow
+from src.VolumeCalculator import VolumeCalculator
 
 
 class MainWindow(QMainWindow):
@@ -9,6 +10,8 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.volume_calculator = VolumeCalculator()
+
         # connects
         self.ui.btp_startScan.clicked.connect(self.start_scan)
         self.ui.btp_stopScan.clicked.connect(self.stop_scan)
@@ -16,9 +19,18 @@ class MainWindow(QMainWindow):
 
     def start_scan(self):
         print("start_scan")
+        self.ui.btp_startScan.setEnabled(False)
+        self.volume_calculator.start()
+        self.ui.btp_stopScan.setEnabled(True)
 
     def stop_scan(self):
         print("stop_scan")
+        self.ui.btp_stopScan.setEnabled(False)
+        self.volume_calculator.stop()
+        self.ui.btp_startScan.setEnabled(True)
 
     def show_PC(self):
         print("show_PC")
+
+    def refresh_data(self):
+        pass

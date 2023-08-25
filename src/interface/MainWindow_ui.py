@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_window.ui'
+## Form generated from reading UI file 'MainWindow.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -76,11 +76,13 @@ class Ui_MainWindow(object):
 
         self.btp_stopScan = QPushButton(self.grb_actions)
         self.btp_stopScan.setObjectName(u"btp_stopScan")
+        self.btp_stopScan.setEnabled(False)
 
         self.horizontalLayout.addWidget(self.btp_stopScan)
 
         self.btp_showPC = QPushButton(self.grb_actions)
         self.btp_showPC.setObjectName(u"btp_showPC")
+        self.btp_showPC.setEnabled(False)
 
         self.horizontalLayout.addWidget(self.btp_showPC)
 

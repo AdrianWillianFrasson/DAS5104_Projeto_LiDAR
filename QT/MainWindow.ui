@@ -127,6 +127,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="btp_stopScan">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Stop Scan</string>
          </property>
@@ -134,6 +137,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="btp_showPC">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Show Point Cloud</string>
          </property>

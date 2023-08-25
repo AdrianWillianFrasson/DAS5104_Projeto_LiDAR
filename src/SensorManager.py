@@ -20,6 +20,34 @@ class SensorManager():
     def set_parameters(self, **params):
         return get(f"http://{self.sensor_ip}/cmd/set_parameter", params=params)
 
+    def request_handle_tcp(
+        self,
+        watchdog: str = "off",  # ["on", "off"]
+        watchdogtimeout: int = 60000,  # [ms]
+        packet_type: str = "A",  # ["A", "B", "C"]
+        start_angle: int = 0,
+        max_num_points_scan: int = 0,
+        skip_scans: int = 0,
+    ):
+
+        params = {
+            "address": self.server_ip,
+            "port": self.server_port,
+            "watchdog": watchdog,
+            "watchdogtimeout": watchdogtimeout,
+            "packet_type": packet_type,
+            "start_angle": start_angle,
+            "max_num_points_scan": max_num_points_scan,
+            "skip_scans": skip_scans,
+        }
+
+        res = get(f"http://{self.sensor_ip}/cmd/request_handle_tcp", params=params)
+
+        if res["ok"]:
+            self.handle = res["data"].get("handle", "")
+
+        return res
+
     def request_handle_udp(
         self,
         watchdog: str = "off",  # ["on", "off"]
