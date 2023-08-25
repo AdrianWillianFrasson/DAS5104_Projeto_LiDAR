@@ -1,4 +1,4 @@
-from ScanManager import ScanManager
+from src.ScanManager import ScanManager
 
 
 class VolumeCalculator():
