@@ -16,7 +16,7 @@ fn main() -> std::io::Result<()> {
     for stream in socket.incoming() {
         let stream = stream?;
         let address = stream.local_addr()?.ip().to_string();
-        let file_path = format!("{output_dir}/{address}.bin");
+        let file_path = format!("{output_dir}{address}.bin");
 
         thread::spawn(|| {
             handle_connection(stream, file_path).unwrap_or_else(|err| println!("{err}"));

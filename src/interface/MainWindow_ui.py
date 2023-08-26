@@ -50,14 +50,18 @@ class Ui_MainWindow(object):
         self.tbw_scans = QTableWidget(self.grb_scans)
         if (self.tbw_scans.columnCount() < 2):
             self.tbw_scans.setColumnCount(2)
+        font = QFont()
+        font.setBold(True)
         __qtablewidgetitem = QTableWidgetItem()
+        __qtablewidgetitem.setFont(font);
         self.tbw_scans.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
+        __qtablewidgetitem1.setFont(font);
         self.tbw_scans.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         self.tbw_scans.setObjectName(u"tbw_scans")
         self.tbw_scans.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tbw_scans.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.tbw_scans.setSortingEnabled(True)
+        self.tbw_scans.setSortingEnabled(False)
         self.tbw_scans.setCornerButtonEnabled(False)
 
         self.verticalLayout_2.addWidget(self.tbw_scans)
@@ -67,24 +71,31 @@ class Ui_MainWindow(object):
 
         self.grb_actions = QGroupBox(self.centralwidget)
         self.grb_actions.setObjectName(u"grb_actions")
-        self.horizontalLayout = QHBoxLayout(self.grb_actions)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.gridLayout = QGridLayout(self.grb_actions)
+        self.gridLayout.setObjectName(u"gridLayout")
         self.btp_startScan = QPushButton(self.grb_actions)
         self.btp_startScan.setObjectName(u"btp_startScan")
+        self.btp_startScan.setEnabled(True)
 
-        self.horizontalLayout.addWidget(self.btp_startScan)
+        self.gridLayout.addWidget(self.btp_startScan, 0, 0, 1, 1)
 
         self.btp_stopScan = QPushButton(self.grb_actions)
         self.btp_stopScan.setObjectName(u"btp_stopScan")
         self.btp_stopScan.setEnabled(False)
 
-        self.horizontalLayout.addWidget(self.btp_stopScan)
+        self.gridLayout.addWidget(self.btp_stopScan, 1, 0, 1, 1)
 
         self.btp_showPC = QPushButton(self.grb_actions)
         self.btp_showPC.setObjectName(u"btp_showPC")
-        self.btp_showPC.setEnabled(False)
+        self.btp_showPC.setEnabled(True)
 
-        self.horizontalLayout.addWidget(self.btp_showPC)
+        self.gridLayout.addWidget(self.btp_showPC, 0, 1, 1, 1)
+
+        self.btp_calculateVolume = QPushButton(self.grb_actions)
+        self.btp_calculateVolume.setObjectName(u"btp_calculateVolume")
+        self.btp_calculateVolume.setEnabled(True)
+
+        self.gridLayout.addWidget(self.btp_calculateVolume, 1, 1, 1, 1)
 
 
         self.verticalLayout.addWidget(self.grb_actions)
@@ -111,5 +122,6 @@ class Ui_MainWindow(object):
         self.btp_startScan.setText(QCoreApplication.translate("MainWindow", u"Start Scan", None))
         self.btp_stopScan.setText(QCoreApplication.translate("MainWindow", u"Stop Scan", None))
         self.btp_showPC.setText(QCoreApplication.translate("MainWindow", u"Show Point Cloud", None))
+        self.btp_calculateVolume.setText(QCoreApplication.translate("MainWindow", u"Calculate Volume", None))
     # retranslateUi
 

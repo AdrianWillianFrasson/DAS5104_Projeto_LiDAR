@@ -1,6 +1,5 @@
-import os
 from subprocess import Popen
-from datetime import datetime
+
 import src.constants as constants
 from src.SensorManager import SensorManager
 
@@ -13,16 +12,11 @@ class ScanManager():
         self.sensor_left = SensorManager(constants.SENSOR_IP_LEFT, constants.SERVER_IP, constants.SERVER_PORT)
         self.sensor_top = SensorManager(constants.SENSOR_IP_TOP, constants.SERVER_IP, constants.SERVER_PORT)
 
-    def start(self):
-        folder_name = datetime.now().strftime("%d-%m-%Y_%Hh%Mmin%Ss")
-
-        if not os.path.exists(f"./pointcloud/{folder_name}"):
-            os.mkdir(f"./pointcloud/{folder_name}")
-
+    def start(self, output_folder: str):
         self.server = Popen([
             "./rust/server_tcp.exe",
             f"{constants.SERVER_IP}:{constants.SERVER_PORT}",
-            f"./pointcloud/{folder_name}",
+            output_folder,
         ])
 
         # self.sensor_front.request_handle_tcp()
