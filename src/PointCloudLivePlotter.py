@@ -1,19 +1,16 @@
-from multiprocessing import Process, Queue
-import open3d as o3d
 import numpy as np
+import open3d as o3d
+from multiprocessing import Process, Queue
 
 
-class LivePointCloudPlot():
+class PointCloudLivePlotter():
 
-    def __init__(self, queue: Queue):
-        self.queue = queue
+    def start(self, queue: Queue):
+        self.process = Process(target=self.run, args=(queue,), daemon=True)
+        self.process.start()
 
     def stop(self):
         self.process.terminate()
-
-    def start(self):
-        self.process = Process(target=self.run, args=(self.queue,), daemon=True)
-        self.process.start()
 
     @staticmethod
     def run(queue: Queue):

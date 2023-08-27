@@ -7,6 +7,8 @@ from src.ScanManager import ScanManager
 from src.Reconstructor3D import Reconstructor3D
 from src.VolumeCalculator import VolumeCalculator
 from src.PointCloudPlotter import PointCloudPlotter
+from src.SensorLiveReceiver import SensorLiveReceiver
+from src.PointCloudLivePlotter import PointCloudLivePlotter
 from src.interface.MainWindow_ui import Ui_MainWindow
 
 
@@ -17,40 +19,48 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.point_cloud_live_plotter = PointCloudLivePlotter()
+        self.sensor_live_receiver = SensorLiveReceiver()
         self.point_cloud_plotter = PointCloudPlotter()
         self.volume_calculator = VolumeCalculator()
         self.reconstructor_3d = Reconstructor3D()
         self.scan_manager = ScanManager()
+
         self.scans = list()
 
         # connects
         self.ui.btp_calculateVolume.clicked.connect(self.calculate_volume)
+        self.ui.btp_showPointCloud.clicked.connect(self.show_point_cloud)
+        self.ui.btp_startLiveScan.clicked.connect(self.start_live_scan)
+        self.ui.btp_stopLiveScan.clicked.connect(self.stop_live_scan)
         self.ui.btp_startScan.clicked.connect(self.start_scan)
         self.ui.btp_stopScan.clicked.connect(self.stop_scan)
-        self.ui.btp_showPC.clicked.connect(self.show_PC)
 
         # setup
         self.ui.tbw_scans.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.refresh_scan_table()
 
     def start_scan(self):
-        output_folder = f"./pointcloud/{datetime.now().strftime('%Y-%m-%d_%Hh%Mmin%Ss')}/"
+        self.ui.btp_startLiveScan.setEnabled(False)
+        self.ui.btp_startScan.setEnabled(False)
 
+        output_folder = f"./pointcloud/{datetime.now().strftime('%Y-%m-%d_%Hh%Mmin%Ss')}/"
         if not os.path.exists(output_folder):
             os.mkdir(output_folder)
-
-        self.ui.btp_startScan.setEnabled(False)
         self.scan_manager.start(output_folder)
+
         self.ui.btp_stopScan.setEnabled(True)
 
     def stop_scan(self):
         self.ui.btp_stopScan.setEnabled(False)
-        self.scan_manager.stop()
-        self.ui.btp_startScan.setEnabled(True)
 
+        self.scan_manager.stop()
+
+        self.ui.btp_startLiveScan.setEnabled(True)
+        self.ui.btp_startScan.setEnabled(True)
         self.refresh_scan_table()
 
-    def show_PC(self):
+    def show_point_cloud(self):
         row_selected = self.ui.tbw_scans.selectedIndexes()
 
         if not row_selected:
@@ -80,6 +90,24 @@ class MainWindow(QMainWindow):
 
         item = self.ui.tbw_scans.item(row_index, 1)
         item.setText(str(volume))
+
+    def start_live_scan(self):
+        self.ui.btp_startLiveScan.setEnabled(False)
+        self.ui.btp_startScan.setEnabled(False)
+
+        self.sensor_live_receiver.start()
+        self.point_cloud_live_plotter.start(self.sensor_live_receiver.queue)
+
+        self.ui.btp_stopLiveScan.setEnabled(True)
+
+    def stop_live_scan(self):
+        self.ui.btp_stopLiveScan.setEnabled(False)
+
+        self.sensor_live_receiver.stop()
+        self.point_cloud_live_plotter.stop()
+
+        self.ui.btp_startLiveScan.setEnabled(True)
+        self.ui.btp_startScan.setEnabled(True)
 
     def refresh_scan_table(self):
         self.scans = [scan for scan in os.listdir("./pointcloud/") if not os.path.isfile(f"./pointcloud/{scan}")]

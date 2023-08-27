@@ -13,17 +13,20 @@ class ScanManager():
         self.sensor_left = SensorManager(Constants.SENSOR_IP_LEFT, Constants.SERVER_IP, Constants.SERVER_PORT)
         self.sensor_top = SensorManager(Constants.SENSOR_IP_TOP, Constants.SERVER_IP, Constants.SERVER_PORT)
 
-        # print(self.sensor_front.set_parameters(samples_per_scan=600, scan_frequency=40))
-        # print(self.sensor_right.set_parameters(samples_per_scan=600, scan_frequency=40))
-        # print(self.sensor_left.set_parameters(samples_per_scan=600, scan_frequency=40))
-        # print(self.sensor_top.set_parameters(samples_per_scan=600, scan_frequency=40))
+        self.server_port = Constants.SERVER_PORT
+        self.server_ip = Constants.SERVER_IP
 
     def start(self, output_folder: str):
         self.server = Popen([
             "./rust/server_tcp.exe",
-            f"{Constants.SERVER_IP}:{Constants.SERVER_PORT}",
+            f"{self.server_ip}:{self.server_port}",
             output_folder,
         ])
+
+        # print(self.sensor_front.set_parameters(samples_per_scan=600, scan_frequency=40))
+        # print(self.sensor_right.set_parameters(samples_per_scan=600, scan_frequency=40))
+        # print(self.sensor_left.set_parameters(samples_per_scan=600, scan_frequency=40))
+        # print(self.sensor_top.set_parameters(samples_per_scan=600, scan_frequency=40))
 
         # self.sensor_front.request_handle_tcp(max_num_points_scan=600, skip_scans=35)
         # self.sensor_right.request_handle_tcp(max_num_points_scan=600, skip_scans=35)
