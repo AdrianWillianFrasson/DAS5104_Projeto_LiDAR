@@ -4,7 +4,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QHeaderView
 
 from src.ScanManager import ScanManager
+from src.Reconstructor3D import Reconstructor3D
 from src.VolumeCalculator import VolumeCalculator
+from src.PointCloudPlotter import PointCloudPlotter
 from src.interface.MainWindow_ui import Ui_MainWindow
 
 
@@ -15,7 +17,9 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.point_cloud_plotter = PointCloudPlotter()
         self.volume_calculator = VolumeCalculator()
+        self.reconstructor_3d = Reconstructor3D()
         self.scan_manager = ScanManager()
         self.scans = list()
 
@@ -47,7 +51,18 @@ class MainWindow(QMainWindow):
         self.refresh_scan_table()
 
     def show_PC(self):
-        pass
+        row_selected = self.ui.tbw_scans.selectedIndexes()
+
+        if not row_selected:
+            return
+
+        row_index = row_selected[0].row()
+        scan_folder = self.scans[row_index]
+
+        if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npy"):
+            self.reconstructor_3d.create_point_cloud(f"./pointcloud/{scan_folder}/")
+
+        self.point_cloud_plotter.start(f"./pointcloud/{scan_folder}/data.npy")
 
     def calculate_volume(self):
         row_selected = self.ui.tbw_scans.selectedIndexes()
@@ -55,7 +70,16 @@ class MainWindow(QMainWindow):
         if not row_selected:
             return
 
-        self.volume_calculator.calculate(f"./pointcloud/{self.scans[row_selected[0].row()]}/")
+        row_index = row_selected[0].row()
+        scan_folder = self.scans[row_index]
+
+        if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npy"):
+            self.reconstructor_3d.create_point_cloud(f"./pointcloud/{scan_folder}/")
+
+        volume = self.volume_calculator.calculate(f"./pointcloud/{scan_folder}/data.npy")
+
+        item = self.ui.tbw_scans.item(row_index, 1)
+        item.setText(str(volume))
 
     def refresh_scan_table(self):
         self.scans = [scan for scan in os.listdir("./pointcloud/") if not os.path.isfile(f"./pointcloud/{scan}")]

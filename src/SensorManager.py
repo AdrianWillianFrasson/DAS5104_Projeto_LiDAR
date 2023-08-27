@@ -1,5 +1,17 @@
-from src.common.http_request import get
-import src.constants as constants
+import requests
+from src.Constants import Constants
+
+
+def get(url: str, params={}):
+    try:
+        res = requests.get(url, params=params, timeout=3)
+    except Exception:
+        return {"ok": False, "data": {}}
+
+    try:
+        return {"ok": res.ok, "data": res.json()}
+    except Exception:
+        return {"ok": res.ok, "data": {}}
 
 
 class SensorManager():
@@ -12,7 +24,7 @@ class SensorManager():
         self.handle = ""
 
         # Default setting...
-        # self.set_parameters(scan_direction=constants.SCAN_DIRECTION)
+        # self.set_parameters(scan_direction=Constants.SCAN_DIRECTION)
 
     def get_parameters(self):
         return get(f"http://{self.sensor_ip}/cmd/get_parameter")

@@ -1,7 +1,8 @@
+import numpy as np
+
+
 class VolumeCalculator():
 
-    def __init__(self):
-        pass
-
-    def calculate(self, scan_path: str):
-        print(scan_path)
+    def calculate(self, data_path: str) -> float:
+        print(data_path)
+        return 69.69
