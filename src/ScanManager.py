@@ -1,3 +1,4 @@
+from time import sleep
 from subprocess import Popen
 
 from src.Constants import Constants
@@ -44,6 +45,9 @@ class ScanManager():
         # self.sensor_right.release_handle()
         # self.sensor_left.release_handle()
         # self.sensor_top.release_handle()
+
+        # TODO: Fechar o servidor automaticamente após ?s sem receber dados.
+        sleep(3)
 
         self.server.terminate()
         self.server.wait()

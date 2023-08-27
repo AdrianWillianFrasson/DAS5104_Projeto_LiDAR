@@ -9,7 +9,7 @@ fn main() -> std::io::Result<()> {
     let server_ip = arguments[1].clone();
     let output_dir = arguments[2].clone();
     // let server_ip = "192.168.80.118:6969";
-    // let output_dir = "./pointcloud";
+    // let output_dir = "./pointcloud/";
 
     let socket = TcpListener::bind(server_ip)?;
 
