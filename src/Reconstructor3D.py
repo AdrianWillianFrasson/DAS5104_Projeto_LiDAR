@@ -11,7 +11,7 @@ class Reconstructor3D():
         # data_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_FRONT}.bin")
         # data_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_RIGHT}.bin")
         # data_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_LEFT}.bin")
-        data_top = self.process_binary_file(f"{scan_path}{'192.168.10.28'}.bin")
+        data_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
 
         xyz = np.array([[xy[0], xy[1], 0] for xy in data_top])
 
