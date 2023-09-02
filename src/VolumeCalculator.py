@@ -6,5 +6,10 @@ class VolumeCalculator():
     def calculate(self, data_path: str) -> float:
         with open(data_path, "rb") as file:
             xyz = np.load(file)
+        # ---------------------------------------------------------------------
 
-        return 69.69
+        # xyz = ...
+        volume = 69.69
+
+        # ---------------------------------------------------------------------
+        return volume

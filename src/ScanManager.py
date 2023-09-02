@@ -30,7 +30,6 @@ class ScanManager():
                 self.sensor_left.request_handle_tcp(max_num_points_scan=600, skip_scans=35)["data"].get("port", None),
             Constants.SENSOR_IP_TOP:
                 self.sensor_top.request_handle_tcp(max_num_points_scan=600, skip_scans=35)["data"].get("port", None),
-            "192.168.80.155": 6969,
         }
 
         addresses = [f"{ip}:{port}" for ip, port in sensors_port.items() if port]

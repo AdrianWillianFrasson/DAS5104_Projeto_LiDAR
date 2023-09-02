@@ -8,17 +8,19 @@ from src.Constants import Constants
 class Reconstructor3D():
 
     def create_point_cloud(self, scan_path: str):
-        # data_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_FRONT}.bin")
-        # data_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_RIGHT}.bin")
-        # data_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_LEFT}.bin")
-        data_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
+        # xy_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_FRONT}.bin")
+        # xy_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_RIGHT}.bin")
+        # xy_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_LEFT}.bin")
+        xy_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
+        # ---------------------------------------------------------------------
 
-        xyz = np.array([[xy[0], xy[1], 0] for xy in data_top])
+        xyz = np.array([[xy[0], xy[1], 0] for xy in xy_top])
 
+        # ---------------------------------------------------------------------
         with open(f"{scan_path}data.npy", "wb") as file:
             np.save(file, xyz)
 
-    def process_binary_file(self, file_path: str):
+    def process_binary_file(self, file_path: str) -> list[tuple[float, float]]:
         file = open(file_path, "rb")
         data = file.read()
         file.close()
