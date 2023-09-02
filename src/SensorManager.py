@@ -1,5 +1,5 @@
 import requests
-from src.Constants import Constants
+# from src.Constants import Constants
 
 
 def get(url: str, params={}):
@@ -37,14 +37,12 @@ class SensorManager():
         watchdog: str = "off",  # ["on", "off"]
         watchdogtimeout: int = 60000,  # [ms]
         packet_type: str = "A",  # ["A", "B", "C"]
-        start_angle: int = 0,
+        start_angle: int = 0,  # [1 / 10000]
         max_num_points_scan: int = 0,
         skip_scans: int = 0,
     ):
 
         params = {
-            "address": self.server_ip,
-            "port": self.server_port,
             "watchdog": watchdog,
             "watchdogtimeout": watchdogtimeout,
             "packet_type": packet_type,
@@ -65,7 +63,7 @@ class SensorManager():
         watchdog: str = "off",  # ["on", "off"]
         watchdogtimeout: int = 60000,  # [ms]
         packet_type: str = "A",  # ["A", "B", "C"]
-        start_angle: int = 0,
+        start_angle: int = 0,  # [1 / 10000]
         max_num_points_scan: int = 0,
         skip_scans: int = 0,
     ):
@@ -100,7 +98,7 @@ class SensorManager():
         watchdog: str = "off",  # ["on", "off"]
         watchdogtimeout: int = 60000,  # [ms]
         packet_type: str = "A",  # ["A", "B", "C"]
-        start_angle: int = 0,
+        start_angle: int = 0,  # [1 / 10000]
         max_num_points_scan: int = 0,
         skip_scans: int = 0,
     ):
