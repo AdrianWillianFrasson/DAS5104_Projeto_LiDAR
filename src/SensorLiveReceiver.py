@@ -28,26 +28,26 @@ class SensorLiveReceiver():
         # print(self.sensor_left.set_parameters(samples_per_scan=600, scan_frequency=40))
         # print(self.sensor_top.set_parameters(samples_per_scan=600, scan_frequency=40))
 
-        # self.sensor_front.request_handle_udp(max_num_points_scan=600, skip_scans=35)
-        # self.sensor_right.request_handle_udp(max_num_points_scan=600, skip_scans=35)
-        # self.sensor_left.request_handle_udp(max_num_points_scan=600, skip_scans=35)
-        # self.sensor_top.request_handle_udp(max_num_points_scan=600, skip_scans=35)
+        # print(self.sensor_front.request_handle_udp(max_num_points_scan=600, skip_scans=35))
+        # print(self.sensor_right.request_handle_udp(max_num_points_scan=600, skip_scans=35))
+        # print(self.sensor_left.request_handle_udp(max_num_points_scan=600, skip_scans=35))
+        # print(self.sensor_top.request_handle_udp(max_num_points_scan=600, skip_scans=35))
 
-        # self.sensor_front.start_scanoutput()
-        # self.sensor_right.start_scanoutput()
-        # self.sensor_left.start_scanoutput()
-        # self.sensor_top.start_scanoutput()
+        # print(self.sensor_front.start_scanoutput())
+        # print(self.sensor_right.start_scanoutput())
+        # print(self.sensor_left.start_scanoutput())
+        # print(self.sensor_top.start_scanoutput())
 
     def stop(self):
-        # self.sensor_front.stop_scanoutput()
-        # self.sensor_right.stop_scanoutput()
-        # self.sensor_left.stop_scanoutput()
-        # self.sensor_top.stop_scanoutput()
+        # print(self.sensor_front.stop_scanoutput())
+        # print(self.sensor_right.stop_scanoutput())
+        # print(self.sensor_left.stop_scanoutput())
+        # print(self.sensor_top.stop_scanoutput())
 
-        # self.sensor_front.release_handle()
-        # self.sensor_right.release_handle()
-        # self.sensor_left.release_handle()
-        # self.sensor_top.release_handle()
+        # print(self.sensor_front.release_handle())
+        # print(self.sensor_right.release_handle())
+        # print(self.sensor_left.release_handle())
+        # print(self.sensor_top.release_handle())
 
         self.process.terminate()
 
@@ -117,6 +117,10 @@ class Handler(DatagramRequestHandler):
         xy = list()
 
         for i, distance in enumerate(distances):
+            # Invalid measurements return 0xFFFFFFFF
+            if distance == 4_294_967_295:
+                continue
+
             angle = (first_angle + i * angular_increment) * pi / 180.0
 
             x = round(distance * cos(angle))

@@ -80,6 +80,10 @@ class Reconstructor3D():
         xy = list()
 
         for i, distance in enumerate(distances):
+            # Invalid measurements return 0xFFFFFFFF
+            if distance == 4_294_967_295:
+                continue
+
             angle = (first_angle + i * angular_increment) * pi / 180.0
 
             x = round(distance * cos(angle))

@@ -23,34 +23,34 @@ class ScanManager():
 
         sensors_port = {
             Constants.SENSOR_IP_FRONT:
-                self.sensor_front.request_handle_tcp(max_num_points_scan=600, skip_scans=35)["data"].get("port", None),
+                self.sensor_front.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
             Constants.SENSOR_IP_RIGHT:
-                self.sensor_right.request_handle_tcp(max_num_points_scan=600, skip_scans=35)["data"].get("port", None),
+                self.sensor_right.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
             Constants.SENSOR_IP_LEFT:
-                self.sensor_left.request_handle_tcp(max_num_points_scan=600, skip_scans=35)["data"].get("port", None),
+                self.sensor_left.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
             Constants.SENSOR_IP_TOP:
-                self.sensor_top.request_handle_tcp(max_num_points_scan=600, skip_scans=35)["data"].get("port", None),
+                self.sensor_top.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
         }
 
         addresses = [f"{ip}:{port}" for ip, port in sensors_port.items() if port]
+        print(addresses)
 
         self.server = Popen(["./rust/client_tcp.exe", output_folder] + addresses)
 
-        # self.sensor_front.start_scanoutput()
-        # self.sensor_right.start_scanoutput()
-        # self.sensor_left.start_scanoutput()
-        # self.sensor_top.start_scanoutput()
+        # print(self.sensor_front.start_scanoutput())
+        # print(self.sensor_right.start_scanoutput())
+        # print(self.sensor_left.start_scanoutput())
+        # print(self.sensor_top.start_scanoutput())
 
     def stop(self):
-        # self.sensor_front.stop_scanoutput()
-        # self.sensor_right.stop_scanoutput()
-        # self.sensor_left.stop_scanoutput()
-        # self.sensor_top.stop_scanoutput()
+        # print(self.sensor_front.stop_scanoutput())
+        # print(self.sensor_right.stop_scanoutput())
+        # print(self.sensor_left.stop_scanoutput())
+        # print(self.sensor_top.stop_scanoutput())
 
-        # self.sensor_front.release_handle()
-        # self.sensor_right.release_handle()
-        # self.sensor_left.release_handle()
-        # self.sensor_top.release_handle()
+        # print(self.sensor_front.release_handle())
+        # print(self.sensor_right.release_handle())
+        # print(self.sensor_left.release_handle())
+        # print(self.sensor_top.release_handle())
 
-        # self.server.terminate()
         self.server.wait()
