@@ -69,10 +69,10 @@ class MainWindow(QMainWindow):
         row_index = row_selected[0].row()
         scan_folder = self.scans[row_index]
 
-        if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npy"):
+        if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npz"):
             self.reconstructor_3d.create_point_cloud(f"./pointcloud/{scan_folder}/")
 
-        self.point_cloud_plotter.start(f"./pointcloud/{scan_folder}/data.npy")
+        self.point_cloud_plotter.start(f"./pointcloud/{scan_folder}/data.npz")
 
     def calculate_volume(self):
         row_selected = self.ui.tbw_scans.selectedIndexes()
@@ -83,10 +83,10 @@ class MainWindow(QMainWindow):
         row_index = row_selected[0].row()
         scan_folder = self.scans[row_index]
 
-        if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npy"):
+        if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npz"):
             self.reconstructor_3d.create_point_cloud(f"./pointcloud/{scan_folder}/")
 
-        volume = self.volume_calculator.calculate(f"./pointcloud/{scan_folder}/data.npy")
+        volume = self.volume_calculator.calculate(f"./pointcloud/{scan_folder}/data.npz")
 
         item = self.ui.tbw_scans.item(row_index, 1)
         item.setText(str(volume))

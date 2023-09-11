@@ -14,20 +14,22 @@ class Reconstructor3D():
         xy_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
         # ---------------------------------------------------------------------
 
-        count = 0
         xyz = list()
+        count = 0
 
         for i, xy in enumerate(xy_top):
-            xyz.append([xy[0], xy[1], count * 1])
 
             if (i % 332) == 0:
                 count += 1
 
-        # xyz_np = np.array([[xy[0], xy[1], 0] for xy in xy_top])
+            x = xy[0]
+            y = xy[1]
+            z = count * 1
+
+            xyz.append([x, y, z])
 
         # ---------------------------------------------------------------------
-        with open(f"{scan_path}data.npy", "wb") as file:
-            np.save(file, xyz)
+        np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
 
     def process_binary_file(self, file_path: str) -> list[tuple[float, float]]:
         file = open(file_path, "rb")

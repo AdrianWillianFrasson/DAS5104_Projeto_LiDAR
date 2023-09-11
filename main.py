@@ -17,3 +17,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO:
+# 1 - Calcular a velocidade;
+# 2 - Excluir o cenario (Subtrair pontos em comum);
+# 3 - Calcular o volume com o que foi obtido com o scanner (Já sem o cenário);
+
+# Point Cloud Format (xyz):
+# [
+# [x1, y1, z1],
+# [x2, y2, z2],
+# ...]

@@ -14,9 +14,9 @@ class PointCloudPlotter():
 
     @staticmethod
     def run(data_path: str):
-        with open(data_path, "rb") as file:
-            xyz = np.load(file)
+        xyz = np.load(data_path)["xyz"]
+        # ---------------------------------------------------------------------
 
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(xyz)
-        o3d.visualization.draw_geometries([pcd])
+        o3d.visualization.draw([pcd])
