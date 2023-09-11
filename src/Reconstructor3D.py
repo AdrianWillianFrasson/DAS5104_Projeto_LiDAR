@@ -18,20 +18,22 @@ class Reconstructor3D():
         count = 0
 
         for i, xy in enumerate(xy_top):
+            x = xy[0]
+            y = xy[1]
+            z = count * 1
 
             if (i % 332) == 0:
                 count += 1
 
-            x = xy[0]
-            y = xy[1]
-            z = count * 1
+            if (x <= 0) or (y <= -1000) or (y >= 1000):
+                continue
 
             xyz.append([x, y, z])
 
         # ---------------------------------------------------------------------
         np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
 
-    def process_binary_file(self, file_path: str) -> list[tuple[float, float]]:
+    def process_binary_file(self, file_path: str) -> list[tuple[int, int]]:
         file = open(file_path, "rb")
         data = file.read()
         file.close()
@@ -84,7 +86,7 @@ class Reconstructor3D():
 
         return xy
 
-    def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int) -> list[tuple[float, float]]:
+    def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int) -> list[tuple[int, int]]:
         first_angle /= 10000
         angular_increment /= 10000
 

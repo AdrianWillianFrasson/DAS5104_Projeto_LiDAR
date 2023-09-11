@@ -19,4 +19,11 @@ class PointCloudPlotter():
 
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(xyz)
-        o3d.visualization.draw([pcd])
+        pcd.estimate_normals()
+
+        # radii = [10, 100, 1000]
+        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, o3d.utility.DoubleVector(radii))
+
+        mesh, _ = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)
+
+        o3d.visualization.draw([pcd, mesh])

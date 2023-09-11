@@ -110,7 +110,7 @@ class Handler(DatagramRequestHandler):
             "xy": self.polar_to_xy(distances, first_angle, angular_increment),
         })
 
-    def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int) -> list[tuple[float, float]]:
+    def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int) -> list[tuple[int, int]]:
         first_angle /= 10000
         angular_increment /= 10000
 
