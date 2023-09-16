@@ -20,8 +20,7 @@ if __name__ == "__main__":
 
 # TODO:
 # 1 - Calcular a velocidade;
-# 2 - Excluir o cenario (Subtrair pontos em comum);
-# 3 - Calcular o volume com o que foi obtido com o scanner (Já sem o cenário);
+# 2 - Calcular o volume com o que foi obtido com o scanner (Já sem o cenário);
 
 # Point Cloud Format (xyz):
 # [

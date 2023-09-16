@@ -22,11 +22,13 @@ class Reconstructor3D():
             y = xy[1]
             z = count * 1
 
+            # Avança na profundidade (Z-axe).
             if (i % 332) == 0:
                 count += 1
 
-            if (x <= 0) or (y <= -1000) or (y >= 1000):
-                continue
+            # Remove paredes.
+            # if (x <= 0) or (y <= -1000) or (y >= 1000):
+                # continue
 
             xyz.append([x, y, z])
 
@@ -46,37 +48,41 @@ class Reconstructor3D():
             if len(packet) <= 10:
                 continue
 
-            # packet_type = unpack("H", packet[:2])[0]
-            packet_size = unpack("I", packet[2:6])[0] - len(magic_byte)
-            header_size = unpack("H", packet[6:8])[0] - len(magic_byte)
-            # scan_number = unpack("H", packet[8:10])[0]
-            # packet_number = unpack("H", packet[10:12])[0]
-            # timestamp_raw = ...
-            # timestamp_sync = ...
-            # status_flags = unpack("I", packet[28:32])[0]
-            # scan_frequency = unpack("I", packet[32:36])[0]
-            # num_points_scan = unpack("H", packet[36:38])[0]
-            # num_points_packet = unpack("H", packet[38:40])[0]
-            # first_index = unpack("H", packet[40:42])[0]
-            first_angle = unpack("i", packet[42:46])[0]
-            angular_increment = unpack("i", packet[46:50])[0]
+            try:
+                # packet_type = unpack("H", packet[:2])[0]
+                packet_size = unpack("I", packet[2:6])[0] - len(magic_byte)
+                header_size = unpack("H", packet[6:8])[0] - len(magic_byte)
+                # scan_number = unpack("H", packet[8:10])[0]
+                # packet_number = unpack("H", packet[10:12])[0]
+                # timestamp_raw = ...
+                # timestamp_sync = ...
+                # status_flags = unpack("I", packet[28:32])[0]
+                # scan_frequency = unpack("I", packet[32:36])[0]
+                # num_points_scan = unpack("H", packet[36:38])[0]
+                # num_points_packet = unpack("H", packet[38:40])[0]
+                # first_index = unpack("H", packet[40:42])[0]
+                first_angle = unpack("i", packet[42:46])[0]
+                angular_increment = unpack("i", packet[46:50])[0]
 
-            # print(f"packet_type: {hex(packet_type)}")
-            # print(f"packet_size: {packet_size}")
-            # print(f"header_size: {header_size}")
-            # print(f"scan_number: {scan_number}")
-            # print(f"packet_number: {packet_number}")
-            # print(f"status_flags: {status_flags}")
-            # print(f"scan_frequency: {scan_frequency}")
-            # print(f"num_points_scan: {num_points_scan}")
-            # print(f"num_points_packet: {num_points_packet}")
-            # print(f"first_index: {first_index}")
-            # print(f"first_angle: {first_angle}")
-            # print(f"angular_increment: {angular_increment}")
-            # print("---------------------------------------")
+                # print(f"packet_type: {hex(packet_type)}")
+                # print(f"packet_size: {packet_size}")
+                # print(f"header_size: {header_size}")
+                # print(f"scan_number: {scan_number}")
+                # print(f"packet_number: {packet_number}")
+                # print(f"status_flags: {status_flags}")
+                # print(f"scan_frequency: {scan_frequency}")
+                # print(f"num_points_scan: {num_points_scan}")
+                # print(f"num_points_packet: {num_points_packet}")
+                # print(f"first_index: {first_index}")
+                # print(f"first_angle: {first_angle}")
+                # print(f"angular_increment: {angular_increment}")
+                # print("---------------------------------------")
+            except Exception:
+                print("[Exception] corrupted package...")
+                continue
 
             if len(packet) != packet_size:
-                print("corrupted package...")
+                print("[packet_size] corrupted package...")
                 continue
 
             payload = packet[header_size:]  # list[uint32] - 4byte
