@@ -1,7 +1,8 @@
 import numpy as np
 
+
 class PointCloudAligner:
-    
+
     def __init__(self):
         # The rotation and translation matrices for the right sensor.
         # It's rotated around z-axis (which is the third row and column in the matrix) by -90 degrees.

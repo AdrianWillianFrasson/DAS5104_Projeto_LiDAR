@@ -2,6 +2,7 @@
 import os
 import importlib
 
+
 def import_all_classes_from_src():
     # This will contain all classes dynamically imported from the 'src' directory
     context = {}
@@ -22,6 +23,7 @@ def import_all_classes_from_src():
 
     return context
 
+
 def launch_shell(predefined_vars):
     # Ensure IPython is available
     try:
@@ -34,6 +36,7 @@ def launch_shell(predefined_vars):
 
     # Start the interactive shell
     start_ipython(argv=[], user_ns=context)
+
 
 if __name__ == "__main__":
     import numpy as np
@@ -51,7 +54,7 @@ if __name__ == "__main__":
         pcd.points = o3d.utility.Vector3dVector(data)
         pcd.estimate_normals()
         o3d.visualization.draw([pcd])
-    
+
     # Creating a dictionary of predefined variables and modules
     predefined_vars = {
         'np': np,

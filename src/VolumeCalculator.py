@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.spatial import ConvexHull
 
+
 class VolumeCalculator():
 
     def calculate(self, data_path: str) -> float:
