@@ -8,39 +8,40 @@ from src.Constants import Constants
 class Reconstructor3D():
 
     def create_point_cloud(self, scan_path: str):
-        # xy_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_FRONT}.bin")
-        # xy_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_RIGHT}.bin")
-        # xy_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_LEFT}.bin")
-        xy_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
+        scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_FRONT}.bin")
+        # scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_RIGHT}.bin")
+        # scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_LEFT}.bin")
+        # scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
         # ---------------------------------------------------------------------
 
         xyz = list()
-        count = 0
+        scan_keys = list(scans_front.keys())
+        scan_keys.sort()
 
-        for i, xy in enumerate(xy_top):
-            x = xy[0]
-            y = xy[1]
-            z = count * 1
+        for i, scan_key in enumerate(scan_keys):
 
-            # Avança na profundidade (Z-axe).
-            if (i % 332) == 0:
-                count += 1
+            print(f"{scan_key} : {scans_front[scan_key]['timestamp_raw']}")
 
-            # Remove paredes.
-            # if (x <= 0) or (y <= -1000) or (y >= 1000):
-                # continue
+            for xy in scans_front[scan_key]["xy"]:
+                x = xy[0]
+                y = xy[1]
+                z = i
 
-            xyz.append([x, y, z])
+                xyz.append([x, y, z])
+
+        # Remove paredes.
+        # if (x <= 0) or (y <= -1000) or (y >= 1000):
+        # continue
 
         # ---------------------------------------------------------------------
         np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
 
-    def process_binary_file(self, file_path: str) -> list[tuple[int, int]]:
+    def process_binary_file(self, file_path: str) -> dict:
         file = open(file_path, "rb")
         data = file.read()
         file.close()
 
-        xy = list()
+        scans = dict()
         magic_byte = pack("H", 0xa25c)
 
         for packet in data.split(magic_byte):
@@ -52,9 +53,9 @@ class Reconstructor3D():
                 # packet_type = unpack("H", packet[:2])[0]
                 packet_size = unpack("I", packet[2:6])[0] - len(magic_byte)
                 header_size = unpack("H", packet[6:8])[0] - len(magic_byte)
-                # scan_number = unpack("H", packet[8:10])[0]
+                scan_number = unpack("H", packet[8:10])[0]
                 # packet_number = unpack("H", packet[10:12])[0]
-                # timestamp_raw = ...
+                timestamp_raw = unpack("Q", packet[12:20])[0]
                 # timestamp_sync = ...
                 # status_flags = unpack("I", packet[28:32])[0]
                 # scan_frequency = unpack("I", packet[32:36])[0]
@@ -69,6 +70,7 @@ class Reconstructor3D():
                 # print(f"header_size: {header_size}")
                 # print(f"scan_number: {scan_number}")
                 # print(f"packet_number: {packet_number}")
+                # print(f"timestamp_raw: {timestamp_raw}")
                 # print(f"status_flags: {status_flags}")
                 # print(f"scan_frequency: {scan_frequency}")
                 # print(f"num_points_scan: {num_points_scan}")
@@ -85,12 +87,27 @@ class Reconstructor3D():
                 print("[packet_size] corrupted package...")
                 continue
 
+            if scan_number not in scans:
+                scans[scan_number] = dict()
+                scans[scan_number]["xy"] = list()
+                scans[scan_number]["timestamp_raw"] = self.u64_to_ntp64(timestamp_raw)
+
             payload = packet[header_size:]  # list[uint32] - 4byte
             distances = unpack(f"{len(payload) // 4}I", payload[:len(payload) // 4 * 4])
 
-            xy.extend(self.polar_to_xy(distances, first_angle, angular_increment))
+            scans[scan_number]["xy"].extend(self.polar_to_xy(distances, first_angle, angular_increment))
 
-        return xy
+        return scans
+
+    def u64_to_ntp64(self, integer):
+        # Upper 32 bits for seconds
+        seconds = integer >> 32
+
+        # Lower 32 bits for fractional seconds
+        fractional_seconds = integer & 0xFFFFFFFF
+        fractional_seconds = (fractional_seconds / 0xFFFFFFFF) * (2**32)
+
+        return seconds + (fractional_seconds / 1.0e9)
 
     def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int) -> list[tuple[int, int]]:
         first_angle /= 10000
