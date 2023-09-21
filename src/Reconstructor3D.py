@@ -14,18 +14,17 @@ class Reconstructor3D():
         # scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
         # ---------------------------------------------------------------------
 
-        xyz = list()
         scan_keys = list(scans_front.keys())
         scan_keys.sort()
 
-        for i, scan_key in enumerate(scan_keys):
+        xyz = list()
 
-            print(f"{scan_key} : {scans_front[scan_key]['timestamp_raw']}")
+        for i, scan_key in enumerate(scan_keys):
 
             for xy in scans_front[scan_key]["xy"]:
                 x = xy[0]
                 y = xy[1]
-                z = i
+                z = scan_key * 100
 
                 xyz.append([x, y, z])
 
@@ -90,7 +89,7 @@ class Reconstructor3D():
             if scan_number not in scans:
                 scans[scan_number] = dict()
                 scans[scan_number]["xy"] = list()
-                scans[scan_number]["timestamp_raw"] = self.u64_to_ntp64(timestamp_raw)
+                scans[scan_number]["timestamp_raw"] = self.ntp64_to_seconds(timestamp_raw)
 
             payload = packet[header_size:]  # list[uint32] - 4byte
             distances = unpack(f"{len(payload) // 4}I", payload[:len(payload) // 4 * 4])
@@ -99,15 +98,15 @@ class Reconstructor3D():
 
         return scans
 
-    def u64_to_ntp64(self, integer):
+    def ntp64_to_seconds(self, integer):
         # Upper 32 bits for seconds
         seconds = integer >> 32
 
         # Lower 32 bits for fractional seconds
         fractional_seconds = integer & 0xFFFFFFFF
-        fractional_seconds = (fractional_seconds / 0xFFFFFFFF) * (2**32)
+        fractional_seconds = fractional_seconds / 0x100000000
 
-        return seconds + (fractional_seconds / 1.0e9)
+        return round(seconds + fractional_seconds, 3)
 
     def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int) -> list[tuple[int, int]]:
         first_angle /= 10000
@@ -128,3 +127,6 @@ class Reconstructor3D():
             xy.append((x, y))
 
         return xy
+
+    def calculate_speed(scans_front):
+        pass
