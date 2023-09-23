@@ -8,10 +8,12 @@ class Constants():
     SENSOR_LEFT_IP = "192.168.1.12"
     SENSOR_TOP_IP = "192.168.1.13"
 
-    SENSOR_RIGHT_TRANSLATION = [1150, 1040]  # [x, y]
-    SENSOR_LEFT_TRANSLATION = [-1150, 1040]  # [x, y]
+    # [x, y, z]
+    SENSOR_RIGHT_TRANSLATION = (1150, 1040, 0)
+    SENSOR_LEFT_TRANSLATION = (1150, -1040, 0)
 
-    SENSOR_RIGHT_ROTATION = 90  # degree
-    SENSOR_LEFT_ROTATION = -90  # degree
+    # Euler angles [xyz]
+    SENSOR_RIGHT_ROTATION = (0, 0, 0)
+    SENSOR_LEFT_ROTATION = (0, 0, 0)
 
     SCAN_DIRECTION = "ccw"

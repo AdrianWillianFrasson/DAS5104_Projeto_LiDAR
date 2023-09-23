@@ -1,4 +1,5 @@
 import numpy as np
+import open3d as o3d
 from math import cos, sin, pi
 from struct import pack, unpack
 
@@ -8,25 +9,26 @@ from src.Constants import Constants
 class Reconstructor3D():
 
     def create_point_cloud(self, scan_path: str):
-        scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
-        # scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
-        # scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
-        # scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
+        # scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
+        scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
+        scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
+        scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
         # ---------------------------------------------------------------------
-
-        scan_keys = list(scans_front.keys())
-        scan_keys.sort()
-
         xyz = list()
 
-        for i, scan_key in enumerate(scan_keys):
+        # speed = self.calculate_speed(scans_front)
+        speed = []
 
-            for xy in scans_front[scan_key]["xy"]:
-                x = xy[0]
-                y = xy[1]
-                z = scan_key * 100
+        xyz_right = self.reconstruct_z_axis(scans_right, speed)
+        xyz_left = self.reconstruct_z_axis(scans_left, speed)
+        xyz_top = self.reconstruct_z_axis(scans_top, speed)
 
-                xyz.append([x, y, z])
+        xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
+        xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
+
+        xyz.extend(xyz_right)
+        xyz.extend(xyz_left)
+        xyz.extend(xyz_top)
 
         # Remove paredes.
         # if (x <= 0) or (y <= -1000) or (y >= 1000):
@@ -98,7 +100,7 @@ class Reconstructor3D():
 
         return scans
 
-    def ntp64_to_seconds(self, integer):
+    def ntp64_to_seconds(self, integer) -> float:
         # Upper 32 bits for seconds
         seconds = integer >> 32
 
@@ -128,5 +130,33 @@ class Reconstructor3D():
 
         return xy
 
-    def calculate_speed(scans_front):
+    def calculate_speed(self, scans_front: dict) -> dict:
         pass
+
+    def reconstruct_z_axis(self, scans: dict, speed: dict) -> list[tuple[int, int, int]]:
+        xyz = list()
+
+        scan_keys = list(scans.keys())
+        scan_keys.sort()
+
+        for i, scan_key in enumerate(scan_keys):
+
+            for xy in scans[scan_key]["xy"]:
+                x = xy[0]
+                y = xy[1]
+                z = i * 2
+
+                xyz.append((x, y, z))
+
+        return xyz
+
+    def transform(self, points, rotation, translation):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(points)
+
+        rotation_matrix = pcd.get_rotation_matrix_from_xyz(rotation)
+
+        pcd.translate(translation)
+        pcd.rotate(rotation_matrix, center=(0, 0, 0))
+
+        return np.asarray(pcd.points)

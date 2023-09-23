@@ -24,6 +24,6 @@ if __name__ == "__main__":
 
 # Point Cloud Format (xyz):
 # [
-# [x1, y1, z1],
-# [x2, y2, z2],
+# (x1, y1, z1)
+# (x2, y2, z2)
 # ...]
