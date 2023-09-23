@@ -10,10 +10,10 @@ from src.SensorManager import SensorManager
 class SensorLiveReceiver():
 
     def __init__(self):
-        self.sensor_front = SensorManager(Constants.SENSOR_IP_FRONT, Constants.SERVER_IP, Constants.SERVER_PORT)
-        self.sensor_right = SensorManager(Constants.SENSOR_IP_RIGHT, Constants.SERVER_IP, Constants.SERVER_PORT)
-        self.sensor_left = SensorManager(Constants.SENSOR_IP_LEFT, Constants.SERVER_IP, Constants.SERVER_PORT)
-        self.sensor_top = SensorManager(Constants.SENSOR_IP_TOP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_front = SensorManager(Constants.SENSOR_FRONT_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_right = SensorManager(Constants.SENSOR_RIGHT_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_left = SensorManager(Constants.SENSOR_LEFT_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_top = SensorManager(Constants.SENSOR_TOP_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
 
         self.server_port = Constants.SERVER_PORT
         self.server_ip = Constants.SERVER_IP

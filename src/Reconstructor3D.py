@@ -8,10 +8,10 @@ from src.Constants import Constants
 class Reconstructor3D():
 
     def create_point_cloud(self, scan_path: str):
-        scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_FRONT}.bin")
-        # scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_RIGHT}.bin")
-        # scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_LEFT}.bin")
-        # scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_IP_TOP}.bin")
+        scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
+        # scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
+        # scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
+        # scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
         # ---------------------------------------------------------------------
 
         scan_keys = list(scans_front.keys())

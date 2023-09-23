@@ -45,9 +45,9 @@ if __name__ == "__main__":
     scan_path = "./pointcloud/caixa_grande_2/"
     # joined_data = np.load(f"{scan_path}joined_data.npz")['xyz']
 
-    # top_data = np.load(f"{scan_path}{Constants.SENSOR_IP_TOP}.npz")['xyz']
-    # right_data = np.load(f"{scan_path}{Constants.SENSOR_IP_RIGHT}.npz")['xyz']
-    # left_data = np.load(f"{scan_path}{Constants.SENSOR_IP_LEFT}.npz")['xyz']
+    # top_data = np.load(f"{scan_path}{Constants.SENSOR_TOP_IP}.npz")['xyz']
+    # right_data = np.load(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.npz")['xyz']
+    # left_data = np.load(f"{scan_path}{Constants.SENSOR_LEFT_IP}.npz")['xyz']
 
     def plot_data(data):
         pcd = o3d.geometry.PointCloud()

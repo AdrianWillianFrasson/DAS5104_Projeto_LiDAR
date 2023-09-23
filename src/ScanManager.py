@@ -7,10 +7,10 @@ from src.SensorManager import SensorManager
 class ScanManager():
 
     def __init__(self):
-        self.sensor_front = SensorManager(Constants.SENSOR_IP_FRONT, Constants.SERVER_IP, Constants.SERVER_PORT)
-        self.sensor_right = SensorManager(Constants.SENSOR_IP_RIGHT, Constants.SERVER_IP, Constants.SERVER_PORT)
-        self.sensor_left = SensorManager(Constants.SENSOR_IP_LEFT, Constants.SERVER_IP, Constants.SERVER_PORT)
-        self.sensor_top = SensorManager(Constants.SENSOR_IP_TOP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_front = SensorManager(Constants.SENSOR_FRONT_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_right = SensorManager(Constants.SENSOR_RIGHT_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_left = SensorManager(Constants.SENSOR_LEFT_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
+        self.sensor_top = SensorManager(Constants.SENSOR_TOP_IP, Constants.SERVER_IP, Constants.SERVER_PORT)
 
         self.server_port = Constants.SERVER_PORT
         self.server_ip = Constants.SERVER_IP
@@ -22,13 +22,13 @@ class ScanManager():
         print(self.sensor_top.set_parameters(samples_per_scan=600, scan_frequency=40))
 
         sensors_port = {
-            Constants.SENSOR_IP_FRONT:
+            Constants.SENSOR_FRONT_IP:
                 self.sensor_front.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
-            Constants.SENSOR_IP_RIGHT:
+            Constants.SENSOR_RIGHT_IP:
                 self.sensor_right.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
-            Constants.SENSOR_IP_LEFT:
+            Constants.SENSOR_LEFT_IP:
                 self.sensor_left.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
-            Constants.SENSOR_IP_TOP:
+            Constants.SENSOR_TOP_IP:
                 self.sensor_top.request_handle_tcp(max_num_points_scan=600, skip_scans=0)["data"].get("port", None),
         }
 
