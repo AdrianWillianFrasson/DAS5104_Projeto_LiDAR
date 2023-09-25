@@ -9,8 +9,8 @@ class Constants():
     SENSOR_TOP_IP = "192.168.1.13"
 
     # [x, y, z]
-    SENSOR_RIGHT_TRANSLATION = (1150, 1040, 0)
-    SENSOR_LEFT_TRANSLATION = (1150, -1040, 0)
+    SENSOR_RIGHT_TRANSLATION = (1070, 1160, 0)
+    SENSOR_LEFT_TRANSLATION = (1105, -1130, 0)
 
     # Euler angles [xyz]
     SENSOR_RIGHT_ROTATION = (0, 0, 0)
