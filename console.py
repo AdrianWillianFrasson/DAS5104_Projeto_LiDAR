@@ -44,7 +44,7 @@ if __name__ == "__main__":
     from src.Constants import Constants
     from src.Reconstructor3D import Reconstructor3D
     scan_path = "./pointcloud/caixa_grande_2/"
-    
+
     rec = Reconstructor3D()
     top_data = rec.process_data(scan_path, "top")
     # left_data = rec.process_data(scan_path, "left")

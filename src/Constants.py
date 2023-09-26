@@ -15,7 +15,7 @@ class Constants():
     # Euler angles [xyz]
     SENSOR_RIGHT_ROTATION = (0, 0, 0)
     SENSOR_LEFT_ROTATION = (0, 0, 0)
-    
+
     # Bounding box
     BOUNDING_BOX_X_MIN = 0
     BOUNDING_BOX_X_MAX = 2370

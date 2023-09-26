@@ -9,15 +9,14 @@ from src.Constants import Constants
 class Reconstructor3D():
 
     def create_point_cloud(self, scan_path: str):
-        # scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
+        scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
         scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
         scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
         scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
         # ---------------------------------------------------------------------
         xyz = list()
 
-        # speed = self.calculate_speed(scans_front)
-        speed = []
+        speed = self.calculate_speed(scans_front)
 
         xyz_right = self.reconstruct_z_axis(scans_right, speed)
         xyz_left = self.reconstruct_z_axis(scans_left, speed)
@@ -29,12 +28,13 @@ class Reconstructor3D():
         xyz.extend(xyz_right)
         xyz.extend(xyz_left)
         xyz.extend(xyz_top)
-    
-    
-        xyz = self.remove_xy(xyz, Constants.BOUNDING_BOX_X_MIN,Constants.BOUNDING_BOX_X_MAX, Constants.BOUNDING_BOX_Y_MIN, Constants.BOUNDING_BOX_Y_MAX)
-        # Remove paredes.
-        # if (x <= 0) or (y <= -1000) or (y >= 1000):
-        # continue
+
+        xyz = self.remove_xy(
+            xyz,
+            Constants.BOUNDING_BOX_X_MIN,
+            Constants.BOUNDING_BOX_X_MAX,
+            Constants.BOUNDING_BOX_Y_MIN, Constants.BOUNDING_BOX_Y_MAX,
+        )
 
         # ---------------------------------------------------------------------
         np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
@@ -146,7 +146,7 @@ class Reconstructor3D():
         return xy
 
     def calculate_speed(self, scans_front: dict) -> dict:
-        pass
+        return []
 
     def reconstruct_z_axis(self, scans: dict, speed: dict) -> list[tuple[int, int, int]]:
         xyz = list()
@@ -177,9 +177,12 @@ class Reconstructor3D():
         return np.asarray(pcd.points)
 
     def remove_xy(self, points, x_min, x_max, y_min, y_max):
-        list_xyz = []
+        xyz = []
+
         for i in range(len(points)):
-            if points[i][0] <= x_min or points[i][0] >= x_max or points[i][1] <= y_min or points[i][1] >= y_max :
+            if points[i][0] <= x_min or points[i][0] >= x_max or points[i][1] <= y_min or points[i][1] >= y_max:
                 continue
-            list_xyz.append(points[i])
-        return list_xyz
+
+            xyz.append(points[i])
+
+        return xyz
