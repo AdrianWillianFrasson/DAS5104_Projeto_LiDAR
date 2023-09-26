@@ -29,7 +29,9 @@ class Reconstructor3D():
         xyz.extend(xyz_right)
         xyz.extend(xyz_left)
         xyz.extend(xyz_top)
-
+    
+    
+        xyz = self.remove_xy(xyz, Constants.BOUNDING_BOX_X_MIN,Constants.BOUNDING_BOX_X_MAX, Constants.BOUNDING_BOX_Y_MIN, Constants.BOUNDING_BOX_Y_MAX)
         # Remove paredes.
         # if (x <= 0) or (y <= -1000) or (y >= 1000):
         # continue
@@ -160,3 +162,13 @@ class Reconstructor3D():
         pcd.rotate(rotation_matrix, center=(0, 0, 0))
 
         return np.asarray(pcd.points)
+
+    def remove_xy(self, points, x_min,x_max,y_min,y_max):
+        list_xyz = []
+        for i in range(len(points)):
+            if points[i][0] <= x_min or points[i][1] <= x_max or points[i][1] >= y_min or points[i][0] >= y_max:
+                continue
+            list_xyz.append(points[i])
+        return list_xyz
+
+    

@@ -15,5 +15,11 @@ class Constants():
     # Euler angles [xyz]
     SENSOR_RIGHT_ROTATION = (0, 0, 0)
     SENSOR_LEFT_ROTATION = (0, 0, 0)
+    
+    # Bounding box
+    BOUNDING_BOX_X_MIN = 0
+    BOUNDING_BOX_X_MAX = 2000
+    BOUNDING_BOX_Y_MIN = -1000
+    BOUNDING_BOX_Y_MAX = 1000
 
     SCAN_DIRECTION = "ccw"
