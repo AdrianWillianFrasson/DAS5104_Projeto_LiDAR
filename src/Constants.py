@@ -18,7 +18,7 @@ class Constants():
     
     # Bounding box
     BOUNDING_BOX_X_MIN = 0
-    BOUNDING_BOX_X_MAX = 2000
+    BOUNDING_BOX_X_MAX = 2900
     BOUNDING_BOX_Y_MIN = -1000
     BOUNDING_BOX_Y_MAX = 1000
 

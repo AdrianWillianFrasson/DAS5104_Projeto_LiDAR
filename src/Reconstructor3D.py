@@ -163,10 +163,10 @@ class Reconstructor3D():
 
         return np.asarray(pcd.points)
 
-    def remove_xy(self, points, x_min,x_max,y_min,y_max):
+    def remove_xy(self, points, x_min, x_max, y_min, y_max):
         list_xyz = []
         for i in range(len(points)):
-            if points[i][0] <= x_min or points[i][1] <= x_max or points[i][1] >= y_min or points[i][0] >= y_max:
+            if points[i][0] <= x_min or points[i][0] >= x_max or points[i][1] <= y_min or points[i][1] >= y_max :
                 continue
             list_xyz.append(points[i])
         return list_xyz
