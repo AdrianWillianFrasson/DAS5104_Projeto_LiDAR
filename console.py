@@ -42,12 +42,14 @@ if __name__ == "__main__":
     import numpy as np
     import open3d as o3d
     from src.Constants import Constants
+    from src.Reconstructor3D import Reconstructor3D
     scan_path = "./pointcloud/caixa_grande_2/"
-    # joined_data = np.load(f"{scan_path}joined_data.npz")['xyz']
-
-    # top_data = np.load(f"{scan_path}{Constants.SENSOR_TOP_IP}.npz")['xyz']
-    # right_data = np.load(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.npz")['xyz']
-    # left_data = np.load(f"{scan_path}{Constants.SENSOR_LEFT_IP}.npz")['xyz']
+    
+    rec = Reconstructor3D()
+    top_data = rec.process_data(scan_path, "top")
+    # left_data = rec.process_data(scan_path, "left")
+    # right_data = rec.process_data(scan_path, "right")
+    # front_data = rec.process_data(scan_path, "front")
 
     def plot_data(data):
         pcd = o3d.geometry.PointCloud()
@@ -62,7 +64,7 @@ if __name__ == "__main__":
         'scan_path': scan_path,
         'plot_data': plot_data,
         # 'joined_data': joined_data,
-        # 'top_data': top_data,
+        'top_data': top_data,
         # 'right_data': right_data,
         # 'left_data': left_data
     }

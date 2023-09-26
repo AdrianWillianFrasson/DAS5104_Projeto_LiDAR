@@ -7,3 +7,4 @@
 **/env/
 
 Cargo.lock
+.DS_Store
