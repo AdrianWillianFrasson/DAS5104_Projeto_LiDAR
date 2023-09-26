@@ -39,6 +39,19 @@ class Reconstructor3D():
         # ---------------------------------------------------------------------
         np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
 
+    def process_data(self, scan_path: str, sensor: str):
+        match sensor:
+            case "top":
+                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
+            case "left":
+                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
+            case "right":
+                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
+            case "front":
+                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
+            case _:
+                raise Exception("Invalid sensor")
+
     def process_binary_file(self, file_path: str) -> dict:
         file = open(file_path, "rb")
         data = file.read()
@@ -170,5 +183,3 @@ class Reconstructor3D():
                 continue
             list_xyz.append(points[i])
         return list_xyz
-
-    
