@@ -16,7 +16,13 @@ class Reconstructor3D():
         # ---------------------------------------------------------------------
         xyz = list()
 
-        speed = self.calculate_speed(scans_front)
+        speed, xyz_front = self.calculate_speed(
+            scans_front,
+            Constants.BOUNDING_BOX_SPEED_X_MIN,
+            Constants.BOUNDING_BOX_SPEED_X_MAX,
+            Constants.BOUNDING_BOX_SPEED_Y_MIN,
+            Constants.BOUNDING_BOX_SPEED_Y_MAX,
+        )
 
         xyz_right = self.reconstruct_z_axis(scans_right, speed)
         xyz_left = self.reconstruct_z_axis(scans_left, speed)
@@ -25,6 +31,7 @@ class Reconstructor3D():
         xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
         xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
 
+        # xyz.extend(xyz_front)
         xyz.extend(xyz_right)
         xyz.extend(xyz_left)
         xyz.extend(xyz_top)
@@ -33,7 +40,8 @@ class Reconstructor3D():
             xyz,
             Constants.BOUNDING_BOX_X_MIN,
             Constants.BOUNDING_BOX_X_MAX,
-            Constants.BOUNDING_BOX_Y_MIN, Constants.BOUNDING_BOX_Y_MAX,
+            Constants.BOUNDING_BOX_Y_MIN,
+            Constants.BOUNDING_BOX_Y_MAX,
         )
 
         # ---------------------------------------------------------------------
@@ -145,8 +153,26 @@ class Reconstructor3D():
 
         return xy
 
-    def calculate_speed(self, scans_front: dict) -> dict:
-        return []
+    def calculate_speed(self, scans_front: dict, x_min: int, x_max: int, y_min: int, y_max: int) -> dict:
+        speed = {}
+        xyz_front = []
+
+        scan_keys = list(scans_front.keys())
+        scan_keys.sort()
+
+        for i, scan_key in enumerate(scan_keys):
+
+            for xy in scans_front[scan_key]["xy"]:
+                x = xy[0]
+                y = xy[1]
+                z = i * 20
+
+                if x <= x_min or x >= x_max or y <= y_min or y >= y_max:
+                    continue
+
+                xyz_front.append((x, y, z))
+
+        return speed, xyz_front
 
     def reconstruct_z_axis(self, scans: dict, speed: dict) -> list[tuple[int, int, int]]:
         xyz = list()
@@ -176,7 +202,7 @@ class Reconstructor3D():
 
         return np.asarray(pcd.points)
 
-    def remove_xy(self, points, x_min, x_max, y_min, y_max):
+    def remove_xy(self, points, x_min: int, x_max: int, y_min: int, y_max: int):
         xyz = []
 
         for i in range(len(points)):
