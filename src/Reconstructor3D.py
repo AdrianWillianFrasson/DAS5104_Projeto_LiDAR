@@ -38,10 +38,10 @@ class Reconstructor3D():
 
         xyz = self.remove_xy(
             xyz,
-            Constants.BOUNDING_BOX_X_MIN,
-            Constants.BOUNDING_BOX_X_MAX,
-            Constants.BOUNDING_BOX_Y_MIN,
-            Constants.BOUNDING_BOX_Y_MAX,
+            Constants.BOUNDING_BOX_PROFILE_X_MIN,
+            Constants.BOUNDING_BOX_PROFILE_X_MAX,
+            Constants.BOUNDING_BOX_PROFILE_Y_MIN,
+            Constants.BOUNDING_BOX_PROFILE_Y_MAX,
         )
 
         # ---------------------------------------------------------------------
@@ -191,24 +191,18 @@ class Reconstructor3D():
 
         return xyz
 
-    def transform(self, points, rotation, translation):
+    def transform(self, points, rotation: tuple[int, int, int], translation: tuple[int, int, int]):
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(points)
 
-        rotation_matrix = pcd.get_rotation_matrix_from_xyz(rotation)
+        if rotation != (0, 0, 0):
+            rotation_matrix = pcd.get_rotation_matrix_from_xyz(rotation)
+            pcd.rotate(rotation_matrix, center=(0, 0, 0))
 
-        pcd.translate(translation)
-        pcd.rotate(rotation_matrix, center=(0, 0, 0))
+        if translation != (0, 0, 0):
+            pcd.translate(translation)
 
         return np.asarray(pcd.points)
 
     def remove_xy(self, points, x_min: int, x_max: int, y_min: int, y_max: int):
-        xyz = []
-
-        for i in range(len(points)):
-            if points[i][0] <= x_min or points[i][0] >= x_max or points[i][1] <= y_min or points[i][1] >= y_max:
-                continue
-
-            xyz.append(points[i])
-
-        return xyz
+        return [p for p in points if not (p[0] <= x_min or p[0] >= x_max or p[1] <= y_min or p[1] >= y_max)]

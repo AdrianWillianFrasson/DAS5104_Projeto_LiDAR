@@ -16,10 +16,14 @@ class ScanManager():
         self.server_ip = Constants.SERVER_IP
 
     def start(self, output_folder: str):
-        print(self.sensor_front.set_parameters(samples_per_scan=600, scan_frequency=40))
-        print(self.sensor_right.set_parameters(samples_per_scan=600, scan_frequency=40))
-        print(self.sensor_left.set_parameters(samples_per_scan=600, scan_frequency=40))
-        print(self.sensor_top.set_parameters(samples_per_scan=600, scan_frequency=40))
+        print(self.sensor_front.set_parameters(samples_per_scan=600,
+              scan_frequency=40, scan_direction=Constants.SCAN_DIRECTION))
+        print(self.sensor_right.set_parameters(samples_per_scan=600,
+              scan_frequency=40, scan_direction=Constants.SCAN_DIRECTION))
+        print(self.sensor_left.set_parameters(samples_per_scan=600,
+              scan_frequency=40, scan_direction=Constants.SCAN_DIRECTION))
+        print(self.sensor_top.set_parameters(samples_per_scan=600,
+              scan_frequency=40, scan_direction=Constants.SCAN_DIRECTION))
 
         sensors_port = {
             Constants.SENSOR_FRONT_IP:

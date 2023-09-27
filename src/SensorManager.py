@@ -23,9 +23,6 @@ class SensorManager():
 
         self.handle = ""
 
-        # Default setting...
-        # self.set_parameters(scan_direction=Constants.SCAN_DIRECTION)
-
     def get_parameters(self):
         return get(f"http://{self.sensor_ip}/cmd/get_parameter")
 
