@@ -10,13 +10,13 @@ class Reconstructor3D():
 
     def create_point_cloud(self, scan_path: str):
         scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
-        scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
-        scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
-        scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
+        # scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
+        # scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
+        # scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
         # ---------------------------------------------------------------------
         xyz = list()
 
-        speed, xyz_front = self.calculate_speed(
+        speed, xyz_front = self.calculate_speeds(
             scans_front,
             Constants.BOUNDING_BOX_SPEED_X_MIN,
             Constants.BOUNDING_BOX_SPEED_X_MAX,
@@ -24,25 +24,25 @@ class Reconstructor3D():
             Constants.BOUNDING_BOX_SPEED_Y_MAX,
         )
 
-        xyz_right = self.reconstruct_z_axis(scans_right, speed)
-        xyz_left = self.reconstruct_z_axis(scans_left, speed)
-        xyz_top = self.reconstruct_z_axis(scans_top, speed)
+        # xyz_right = self.reconstruct_z_axis(scans_right, speed)
+        # xyz_left = self.reconstruct_z_axis(scans_left, speed)
+        # xyz_top = self.reconstruct_z_axis(scans_top, speed)
 
-        xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
-        xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
+        # xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
+        # xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
 
-        # xyz.extend(xyz_front)
-        xyz.extend(xyz_right)
-        xyz.extend(xyz_left)
-        xyz.extend(xyz_top)
+        xyz.extend(xyz_front)
+        # xyz.extend(xyz_right)
+        # xyz.extend(xyz_left)
+        # xyz.extend(xyz_top)
 
-        xyz = self.remove_xy(
-            xyz,
-            Constants.BOUNDING_BOX_PROFILE_X_MIN,
-            Constants.BOUNDING_BOX_PROFILE_X_MAX,
-            Constants.BOUNDING_BOX_PROFILE_Y_MIN,
-            Constants.BOUNDING_BOX_PROFILE_Y_MAX,
-        )
+        # xyz = self.remove_xy(
+        #     xyz,
+        #     Constants.BOUNDING_BOX_PROFILE_X_MIN,
+        #     Constants.BOUNDING_BOX_PROFILE_X_MAX,
+        #     Constants.BOUNDING_BOX_PROFILE_Y_MIN,
+        #     Constants.BOUNDING_BOX_PROFILE_Y_MAX,
+        # )
 
         # ---------------------------------------------------------------------
         np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
@@ -153,39 +153,73 @@ class Reconstructor3D():
 
         return xy
 
-    def calculate_speed(self, scans_front: dict, x_min: int, x_max: int, y_min: int, y_max: int) -> dict:
-        speed = {}
+    def calculate_speeds(self, scans_front: dict, x_min: int, x_max: int, y_min: int, y_max: int) -> list:
+        speeds = []
+        distances = []
         xyz_front = []
+        # dist_avg = dict()
+        # pcd_speed_dict = dict()
 
         scan_keys = list(scans_front.keys())
         scan_keys.sort()
 
         for i, scan_key in enumerate(scan_keys):
+            distance = scans_front[scan_key]["xy"][0][1]
 
             for xy in scans_front[scan_key]["xy"]:
                 x = xy[0]
                 y = xy[1]
-                z = i * 20
+                z = i * 5
 
                 if x <= x_min or x >= x_max or y <= y_min or y >= y_max:
                     continue
 
+                if y > distance:
+                    distance = y
+
                 xyz_front.append((x, y, z))
 
-        return speed, xyz_front
+            distances.append(distance)
+
+        #     pcd_speed = o3d.geometry.PointCloud()
+        #     pcd_speed.points = o3d.utility.Vector3dVector(xyz_front)
+        #     pcd_speed_dict[i] = dict()
+        #     pcd_speed_dict[i]["pcd_dists"] = pcd_speed
+        #     pcd_speed_dict[i]["time"] = scans_front[scan_key]["timestamp_raw"]
+
+        # for key in range(len(pcd_speed_dict)-1):
+
+        #     dists = pcd_speed_dict[key]["pcd_dists"].compute_point_cloud_distance(pcd_speed_dict[key+1]["pcd_dists"])
+        #     dists_list = np.asarray(dists)
+        #     dist_avg[key] = np.average(dists_list)
+        #     speed[key] = dist_avg[key] / (pcd_speed_dict[key+1]["time"] - pcd_speed_dict[key]["time"])
+
+        # for k, v in speed.items():
+        #     print(f"{k}: {v}")
+
+        print(len(distances))
+        print(len(scan_keys))
+        print("------------")
+        print(distances)
+
+        return speeds, xyz_front
 
     def reconstruct_z_axis(self, scans: dict, speed: dict) -> list[tuple[int, int, int]]:
         xyz = list()
+        z = 0
 
         scan_keys = list(scans.keys())
         scan_keys.sort()
 
-        for i, scan_key in enumerate(scan_keys):
+        speed_keys = list(speed.keys())
+        speed_keys.sort()
 
-            for xy in scans[scan_key]["xy"]:
+        for keys in zip(scan_keys, speed_keys):
+            z += speed[keys[1]] * 0.025
+
+            for xy in scans[keys[0]]["xy"]:
                 x = xy[0]
                 y = xy[1]
-                z = i * 2
 
                 xyz.append((x, y, z))
 
