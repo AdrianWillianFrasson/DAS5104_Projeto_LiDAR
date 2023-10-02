@@ -44,6 +44,8 @@ class Reconstructor3D():
             Constants.BOUNDING_BOX_PROFILE_Y_MAX,
         )
 
+        xyz = self.filter_point_cloud(xyz)
+
         # ---------------------------------------------------------------------
         np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
 
@@ -189,7 +191,6 @@ class Reconstructor3D():
 
             speeds.append(round(speed))
 
-        print(speeds)
         return speeds, xyz_front
 
     def reconstruct_z_axis(self, scans: dict, speeds: list) -> list[tuple[int, int, int]]:
@@ -223,3 +224,12 @@ class Reconstructor3D():
 
     def remove_xy(self, points, x_min: int, x_max: int, y_min: int, y_max: int):
         return [p for p in points if not (p[0] <= x_min or p[0] >= x_max or p[1] <= y_min or p[1] >= y_max)]
+
+    def filter_point_cloud(self, points):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(points)
+
+        xyz_1, _ = pcd.remove_radius_outlier(nb_points=20, radius=60)
+        xyz_2, _ = xyz_1.remove_statistical_outlier(nb_neighbors=20, std_ratio=0.5)
+
+        return np.asarray(xyz_2.points)
