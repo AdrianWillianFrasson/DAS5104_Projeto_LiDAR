@@ -18,10 +18,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-# TODO:
-# 1 - Calcular a velocidade;
-# 2 - Calcular o volume com o que foi obtido com o scanner (Já sem o cenário);
-
 # Point Cloud Format (xyz):
 # [
 # (x1, y1, z1)

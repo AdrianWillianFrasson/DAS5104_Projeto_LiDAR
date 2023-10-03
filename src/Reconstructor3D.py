@@ -17,7 +17,7 @@ class Reconstructor3D():
         # ---------------------------------------------------------------------
         xyz = list()
 
-        speeds, xyz_front = self.calculate_speeds(
+        speeds, xyz_front = self.calculate_speeds2(
             scans_front,
             Constants.BOUNDING_BOX_SPEED_X_MIN,
             Constants.BOUNDING_BOX_SPEED_X_MAX,
@@ -25,9 +25,9 @@ class Reconstructor3D():
             Constants.BOUNDING_BOX_SPEED_Y_MAX,
         )
 
-        xyz_right = self.reconstruct_z_axis(scans_right, speeds)
-        xyz_left = self.reconstruct_z_axis(scans_left, speeds)
-        xyz_top = self.reconstruct_z_axis(scans_top, speeds)
+        xyz_right = self.reconstruct_z_axis2(scans_right, speeds)
+        xyz_left = self.reconstruct_z_axis2(scans_left, speeds)
+        xyz_top = self.reconstruct_z_axis2(scans_top, speeds)
 
         xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
         xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
@@ -194,6 +194,29 @@ class Reconstructor3D():
 
         return speeds, xyz_front
 
+    def calculate_speeds2(self, scans_front: dict, x_min: int, x_max: int, y_min: int, y_max: int) -> dict:
+        biggest_y = {}
+        xyz_front = []
+
+        for i, scan_key in enumerate(sorted(scans_front.keys())):
+            # biggest_y[i] = biggest_y.get(i-1, y_min)
+            biggest_y[i] = y_min
+
+            for xy in scans_front[scan_key]["xy"]:
+                x = xy[0]
+                y = xy[1]
+                z = i * 5
+
+                if x <= x_min or x >= x_max or y <= y_min or y >= y_max:
+                    continue
+
+                if y > biggest_y[i]:
+                    biggest_y[i] = y
+
+                xyz_front.append((x, y, z))
+
+        return biggest_y, xyz_front
+
     def reconstruct_z_axis(self, scans: dict, speeds: list) -> list[tuple[int, int, int]]:
         xyz = list()
 
@@ -210,6 +233,20 @@ class Reconstructor3D():
 
             dt = scans[sorted_keys[i+1]]["timestamp"] - scans[sorted_keys[i]]["timestamp"]
             z += round(speeds[i] * dt)
+
+        return xyz
+
+    def reconstruct_z_axis2(self, scans: dict, speeds: dict) -> list[tuple[int, int, int]]:
+        xyz = list()
+
+        for key in zip(sorted(scans.keys()), sorted(speeds.keys())):
+
+            for xy in scans[key[0]]["xy"]:
+                x = xy[0]
+                y = xy[1]
+                z = speeds[key[1]]
+
+                xyz.append((x, y, z))
 
         return xyz
 
