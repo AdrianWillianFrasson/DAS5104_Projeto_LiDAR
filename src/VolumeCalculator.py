@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.spatial import ConvexHull
+import open3d as o3d
 
 
 class VolumeCalculator():
@@ -7,8 +7,15 @@ class VolumeCalculator():
     def calculate(self, data_path: str) -> float:
         xyz = np.load(data_path)["xyz"]
 
-        # real_volume_caixa = 79 * 77 * 50.2 = 305366.6
-        hull = ConvexHull(xyz)
-        volume = hull.volume
+        # ---------------------------------------------------------------------
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(xyz)
 
-        return volume
+        hull, _ = pcd.compute_convex_hull()
+        hull.orient_triangles()
+
+        volume = hull.get_volume() / 1000  # [mm^3] -> [cm^3]
+
+        # ---------------------------------------------------------------------
+        # Volume Real (Caixa) = 79 * 77 * 50.2 = 305366.6 [cm^3]
+        return round(volume)

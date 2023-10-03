@@ -99,7 +99,7 @@
          </property>
          <column>
           <property name="text">
-           <string>Date</string>
+           <string>ID</string>
           </property>
           <property name="font">
            <font>
@@ -109,7 +109,7 @@
          </column>
          <column>
           <property name="text">
-           <string>Volume</string>
+           <string>Volume [cm^3]</string>
           </property>
           <property name="font">
            <font>

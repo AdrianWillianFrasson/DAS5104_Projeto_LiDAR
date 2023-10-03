@@ -13,6 +13,7 @@ class Reconstructor3D():
         scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
         scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
         scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
+
         # ---------------------------------------------------------------------
         xyz = list()
 
@@ -162,7 +163,7 @@ class Reconstructor3D():
 
         for i, scan_key in enumerate(sorted(scans_front.keys())):
             biggest_y[i] = {}
-            biggest_y[i]["y"] = y_min
+            biggest_y[i]["y"] = biggest_y.get(i-1, {"y": y_min})["y"]
             biggest_y[i]["timestamp"] = scans_front[scan_key]["timestamp"]
 
             for xy in scans_front[scan_key]["xy"]:
@@ -182,12 +183,12 @@ class Reconstructor3D():
 
         for i in range(len(sorted_keys) - 1):
             y_curr = biggest_y[sorted_keys[i]]
-            y_next = biggest_y[sorted_keys[i + 1]]
+            y_next = biggest_y[sorted_keys[i+1]]
 
             speed = (y_next["y"] - y_curr["y"]) / (y_next["timestamp"] - y_curr["timestamp"])
 
-            if speed < 0:
-                speed = 0
+            if speed < 0.0:
+                speed = 0.0
 
             speeds.append(round(speed))
 
@@ -195,17 +196,20 @@ class Reconstructor3D():
 
     def reconstruct_z_axis(self, scans: dict, speeds: list) -> list[tuple[int, int, int]]:
         xyz = list()
+
+        sorted_keys = sorted(scans.keys())
         z = 0
 
-        for key, speed in zip(sorted(scans.keys()), sorted(speeds)):
+        for i in range(len(speeds) - 1):
 
-            for xy in scans[key]["xy"]:
+            for xy in scans[sorted_keys[i]]["xy"]:
                 x = xy[0]
                 y = xy[1]
 
                 xyz.append((x, y, z))
 
-            z += round(speed * 0.025)
+            dt = scans[sorted_keys[i+1]]["timestamp"] - scans[sorted_keys[i]]["timestamp"]
+            z += round(speeds[i] * dt)
 
         return xyz
 
@@ -229,7 +233,7 @@ class Reconstructor3D():
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(points)
 
-        xyz_1, _ = pcd.remove_radius_outlier(nb_points=20, radius=60)
-        xyz_2, _ = xyz_1.remove_statistical_outlier(nb_neighbors=20, std_ratio=0.5)
+        xyz_1, _ = pcd.remove_radius_outlier(nb_points=10, radius=60)
+        xyz_2, _ = xyz_1.remove_statistical_outlier(nb_neighbors=60, std_ratio=0.7)
 
         return np.asarray(xyz_2.points)

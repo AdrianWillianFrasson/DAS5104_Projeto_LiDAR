@@ -83,8 +83,8 @@ class MainWindow(QMainWindow):
         row_index = row_selected[0].row()
         scan_folder = self.scans[row_index]
 
-        if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npz"):
-            self.reconstructor_3d.create_point_cloud(f"./pointcloud/{scan_folder}/")
+        # if not os.path.isfile(f"./pointcloud/{scan_folder}/data.npz"):
+        self.reconstructor_3d.create_point_cloud(f"./pointcloud/{scan_folder}/")
 
         volume = self.volume_calculator.calculate(f"./pointcloud/{scan_folder}/data.npz")
 

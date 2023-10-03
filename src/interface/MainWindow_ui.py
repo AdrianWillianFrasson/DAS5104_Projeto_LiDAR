@@ -138,9 +138,9 @@ class Ui_MainWindow(object):
         self.lbl_splash.setText("")
         self.grb_scansList.setTitle(QCoreApplication.translate("MainWindow", u"Scans List", None))
         ___qtablewidgetitem = self.tbw_scans.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Date", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"ID", None));
         ___qtablewidgetitem1 = self.tbw_scans.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Volume", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Volume [cm^3]", None));
         self.grb_scan.setTitle(QCoreApplication.translate("MainWindow", u"Scan", None))
         self.btp_startScan.setText(QCoreApplication.translate("MainWindow", u"Start Scan", None))
         self.btp_stopScan.setText(QCoreApplication.translate("MainWindow", u"Stop Scan", None))

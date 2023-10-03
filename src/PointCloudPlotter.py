@@ -16,19 +16,17 @@ class PointCloudPlotter():
     @staticmethod
     def run(data_path: str):
         xyz = np.load(data_path)["xyz"]
-        # ---------------------------------------------------------------------
 
+        # ---------------------------------------------------------------------
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(xyz)
 
         rotation_matrix = pcd.get_rotation_matrix_from_xyz((0, 0, -pi/2))
         pcd.rotate(rotation_matrix, center=(0, 0, 0))
 
-        # pcd.estimate_normals()
+        hull, _ = pcd.compute_convex_hull()
+        hull_ls = o3d.geometry.LineSet.create_from_triangle_mesh(hull)
+        hull_ls.paint_uniform_color((1, 0, 0))
 
-        # radii = [10, 100, 1000]
-        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, o3d.utility.DoubleVector(radii))
-
-        # mesh, _ = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)
-
-        o3d.visualization.draw([pcd])
+        # ---------------------------------------------------------------------
+        o3d.visualization.draw([pcd, hull_ls])
