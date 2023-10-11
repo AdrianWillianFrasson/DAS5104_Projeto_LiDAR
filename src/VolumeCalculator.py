@@ -43,6 +43,7 @@ class VolumeCalculator():
 
     def calculate(self, data_path: str) -> float:
         xyz = np.load(data_path)["xyz"]
+        # Volume Real (Caixa) = 79 * 77 * 50.2 = 305366.6 [cm^3]
 
         # ---------------------------------------------------------------------
         xyz = transform(xyz, [0, 0, -pi/2], [0, 2350, 0])
@@ -50,11 +51,15 @@ class VolumeCalculator():
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(xyz)
 
-        # hull, _ = pcd.compute_convex_hull()
-        # hull.orient_triangles()
+        # Convex Hull ---------------------------------------------------------
+        hull, _ = pcd.compute_convex_hull()
+        hull.orient_triangles()
 
-        # volume = hull.get_volume() / 1000  # [mm^3] -> [cm^3]
+        volume_convex_hull = hull.get_volume()
+        volume_convex_hull /= 1000  # [mm^3] -> [cm^3]
+        print(volume_convex_hull)
 
+        # Delaunay ------------------------------------------------------------
         downpdc = pcd.voxel_down_sample(voxel_size=30)
         xyz = np.asarray(downpdc.points)
         xy_catalog = []
@@ -70,10 +75,11 @@ class VolumeCalculator():
 
         o3d.visualization.draw([downpdc, surface])
 
-        volume = reduce(lambda a, b:  a + volume_under_triangle(b),
-                        get_triangles_vertices(surface.triangles, surface.vertices), 0)
+        volume_delaunay = reduce(lambda a, b:  a + volume_under_triangle(b),
+                                 get_triangles_vertices(surface.triangles, surface.vertices), 0)
 
-        print(round(volume, 4))
+        volume_delaunay /= 1000  # [mm^3] -> [cm^3]
+        print(volume_delaunay)
         # ---------------------------------------------------------------------
-        # Volume Real (Caixa) = 79 * 77 * 50.2 = 305366.6 [cm^3]
-        return round(volume)
+
+        return round(volume_delaunay, 2)
