@@ -1,5 +1,6 @@
 **/__pycache__/
 **/pointcloud/
+**/__init__/
 **/.vscode/
 **/target/
 **/.idea/

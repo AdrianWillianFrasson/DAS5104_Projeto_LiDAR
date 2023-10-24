@@ -17,17 +17,17 @@ class Reconstructor3D():
         # ---------------------------------------------------------------------
         xyz = list()
 
-        speeds, xyz_front = self.calculate_speeds2(
+        z_axis, xyz_front = self.calculate_z_axis(
             scans_front,
-            Constants.BOUNDING_BOX_SPEED_X_MIN,
-            Constants.BOUNDING_BOX_SPEED_X_MAX,
-            Constants.BOUNDING_BOX_SPEED_Y_MIN,
-            Constants.BOUNDING_BOX_SPEED_Y_MAX,
+            Constants.BOUNDARIES_ZAXIS_X_MIN,
+            Constants.BOUNDARIES_ZAXIS_X_MAX,
+            Constants.BOUNDARIES_ZAXIS_Y_MIN,
+            Constants.BOUNDARIES_ZAXIS_Y_MAX,
         )
 
-        xyz_right = self.reconstruct_z_axis2(scans_right, speeds)
-        xyz_left = self.reconstruct_z_axis2(scans_left, speeds)
-        xyz_top = self.reconstruct_z_axis2(scans_top, speeds)
+        xyz_right = self.reconstruct_z_axis(scans_right, z_axis)
+        xyz_left = self.reconstruct_z_axis(scans_left, z_axis)
+        xyz_top = self.reconstruct_z_axis(scans_top, z_axis)
 
         xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
         xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
@@ -37,33 +37,21 @@ class Reconstructor3D():
         xyz.extend(xyz_left)
         xyz.extend(xyz_top)
 
-        xyz = self.remove_xy(
+        xyz = self.remove_boundaries(
             xyz,
-            Constants.BOUNDING_BOX_PROFILE_X_MIN,
-            Constants.BOUNDING_BOX_PROFILE_X_MAX,
-            Constants.BOUNDING_BOX_PROFILE_Y_MIN,
-            Constants.BOUNDING_BOX_PROFILE_Y_MAX,
+            Constants.BOUNDARIES_PROFILE_X_MIN,
+            Constants.BOUNDARIES_PROFILE_X_MAX,
+            Constants.BOUNDARIES_PROFILE_Y_MIN,
+            Constants.BOUNDARIES_PROFILE_Y_MAX,
         )
 
         xyz = self.filter_point_cloud(xyz)
+        xyz = self.transform(xyz, (0, 0, -pi/2), (0, Constants.SENSOR_TOP_HEIGHT, 0))
 
         # ---------------------------------------------------------------------
-        np.savez_compressed(f"{scan_path}data.npz", xyz=xyz)
+        return xyz
 
-    def process_data(self, scan_path: str, sensor: str):
-        match sensor:
-            case "top":
-                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
-            case "left":
-                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
-            case "right":
-                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
-            case "front":
-                return self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
-            case _:
-                raise Exception("Invalid sensor")
-
-    def process_binary_file(self, file_path: str) -> dict:
+    def process_binary_file(self, file_path: str):
         file = open(file_path, "rb")
         data = file.read()
         file.close()
@@ -126,7 +114,7 @@ class Reconstructor3D():
 
         return scans
 
-    def ntp64_to_seconds(self, integer) -> float:
+    def ntp64_to_seconds(self, integer):
         # Upper 32 bits for seconds
         seconds = integer >> 32
 
@@ -136,7 +124,7 @@ class Reconstructor3D():
 
         return round(seconds + fractional_seconds, 3)
 
-    def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int) -> list[tuple[int, int]]:
+    def polar_to_xy(self, distances: list, first_angle: int, angular_increment: int):
         first_angle /= 10000
         angular_increment /= 10000
 
@@ -156,15 +144,13 @@ class Reconstructor3D():
 
         return xy
 
-    def calculate_speeds(self, scans_front: dict, x_min: int, x_max: int, y_min: int, y_max: int) -> list:
-        biggest_y = {}
+    def calculate_z_axis(self, scans_front: dict, x_min: int, x_max: int, y_min: int, y_max: int):
+        z_axis = {}
         xyz_front = []
-        speeds = []
 
         for i, scan_key in enumerate(sorted(scans_front.keys())):
-            biggest_y[i] = {}
-            biggest_y[i]["y"] = biggest_y.get(i-1, {"y": y_min})["y"]
-            biggest_y[i]["timestamp"] = scans_front[scan_key]["timestamp"]
+            # z_axis[i] = z_axis.get(i-1, y_min)
+            z_axis[i] = y_min
 
             for xy in scans_front[scan_key]["xy"]:
                 x = xy[0]
@@ -174,77 +160,22 @@ class Reconstructor3D():
                 if x <= x_min or x >= x_max or y <= y_min or y >= y_max:
                     continue
 
-                if y > biggest_y[i]["y"]:
-                    biggest_y[i]["y"] = y
+                if y > z_axis[i]:
+                    z_axis[i] = y
 
                 xyz_front.append((x, y, z))
 
-        sorted_keys = sorted(biggest_y.keys())
+        return z_axis, xyz_front
 
-        for i in range(len(sorted_keys) - 1):
-            y_curr = biggest_y[sorted_keys[i]]
-            y_next = biggest_y[sorted_keys[i+1]]
-
-            speed = (y_next["y"] - y_curr["y"]) / (y_next["timestamp"] - y_curr["timestamp"])
-
-            if speed < 0.0:
-                speed = 0.0
-
-            speeds.append(round(speed))
-
-        return speeds, xyz_front
-
-    def calculate_speeds2(self, scans_front: dict, x_min: int, x_max: int, y_min: int, y_max: int) -> dict:
-        biggest_y = {}
-        xyz_front = []
-
-        for i, scan_key in enumerate(sorted(scans_front.keys())):
-            # biggest_y[i] = biggest_y.get(i-1, y_min)
-            biggest_y[i] = y_min
-
-            for xy in scans_front[scan_key]["xy"]:
-                x = xy[0]
-                y = xy[1]
-                z = i * 5
-
-                if x <= x_min or x >= x_max or y <= y_min or y >= y_max:
-                    continue
-
-                if y > biggest_y[i]:
-                    biggest_y[i] = y
-
-                xyz_front.append((x, y, z))
-
-        return biggest_y, xyz_front
-
-    def reconstruct_z_axis(self, scans: dict, speeds: list) -> list[tuple[int, int, int]]:
+    def reconstruct_z_axis(self, scans: dict, z_axis: dict) -> list[tuple[int, int, int]]:
         xyz = list()
 
-        sorted_keys = sorted(scans.keys())
-        z = 0
-
-        for i in range(len(speeds) - 1):
-
-            for xy in scans[sorted_keys[i]]["xy"]:
-                x = xy[0]
-                y = xy[1]
-
-                xyz.append((x, y, z))
-
-            dt = scans[sorted_keys[i+1]]["timestamp"] - scans[sorted_keys[i]]["timestamp"]
-            z += round(speeds[i] * dt)
-
-        return xyz
-
-    def reconstruct_z_axis2(self, scans: dict, speeds: dict) -> list[tuple[int, int, int]]:
-        xyz = list()
-
-        for key in zip(sorted(scans.keys()), sorted(speeds.keys())):
+        for key in zip(sorted(scans.keys()), sorted(z_axis.keys())):
 
             for xy in scans[key[0]]["xy"]:
                 x = xy[0]
                 y = xy[1]
-                z = speeds[key[1]]
+                z = z_axis[key[1]]
 
                 xyz.append((x, y, z))
 
@@ -263,7 +194,7 @@ class Reconstructor3D():
 
         return np.asarray(pcd.points)
 
-    def remove_xy(self, points, x_min: int, x_max: int, y_min: int, y_max: int):
+    def remove_boundaries(self, points, x_min: int, x_max: int, y_min: int, y_max: int):
         return [p for p in points if not (p[0] <= x_min or p[0] >= x_max or p[1] <= y_min or p[1] >= y_max)]
 
     def filter_point_cloud(self, points):

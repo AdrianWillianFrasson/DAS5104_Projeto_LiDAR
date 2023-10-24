@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.6.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -36,18 +36,39 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.lbl_splash)
 
-        self.grb_scansList = QGroupBox(self.centralwidget)
-        self.grb_scansList.setObjectName(u"grb_scansList")
+        self.grb_scans = QGroupBox(self.centralwidget)
+        self.grb_scans.setObjectName(u"grb_scans")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.grb_scansList.sizePolicy().hasHeightForWidth())
-        self.grb_scansList.setSizePolicy(sizePolicy)
-        self.verticalLayout_2 = QVBoxLayout(self.grb_scansList)
+        sizePolicy.setHeightForWidth(self.grb_scans.sizePolicy().hasHeightForWidth())
+        self.grb_scans.setSizePolicy(sizePolicy)
+        self.verticalLayout_2 = QVBoxLayout(self.grb_scans)
         self.verticalLayout_2.setSpacing(10)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
-        self.tbw_scans = QTableWidget(self.grb_scansList)
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(10)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.lbl_search = QLabel(self.grb_scans)
+        self.lbl_search.setObjectName(u"lbl_search")
+
+        self.horizontalLayout.addWidget(self.lbl_search)
+
+        self.lne_search = QLineEdit(self.grb_scans)
+        self.lne_search.setObjectName(u"lne_search")
+
+        self.horizontalLayout.addWidget(self.lne_search)
+
+        self.btp_refreshTable = QPushButton(self.grb_scans)
+        self.btp_refreshTable.setObjectName(u"btp_refreshTable")
+
+        self.horizontalLayout.addWidget(self.btp_refreshTable)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
+
+        self.tbw_scans = QTableWidget(self.grb_scans)
         if (self.tbw_scans.columnCount() < 2):
             self.tbw_scans.setColumnCount(2)
         font = QFont()
@@ -67,61 +88,34 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.tbw_scans)
 
 
-        self.verticalLayout.addWidget(self.grb_scansList)
+        self.verticalLayout.addWidget(self.grb_scans)
 
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.grb_scan = QGroupBox(self.centralwidget)
-        self.grb_scan.setObjectName(u"grb_scan")
-        self.gridLayout = QGridLayout(self.grb_scan)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.btp_startScan = QPushButton(self.grb_scan)
+        self.grb_operations = QGroupBox(self.centralwidget)
+        self.grb_operations.setObjectName(u"grb_operations")
+        self.verticalLayout_3 = QVBoxLayout(self.grb_operations)
+        self.verticalLayout_3.setSpacing(10)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(10, 10, 10, 10)
+        self.btp_startScan = QPushButton(self.grb_operations)
         self.btp_startScan.setObjectName(u"btp_startScan")
         self.btp_startScan.setEnabled(True)
 
-        self.gridLayout.addWidget(self.btp_startScan, 0, 0, 1, 1)
+        self.verticalLayout_3.addWidget(self.btp_startScan)
 
-        self.btp_stopScan = QPushButton(self.grb_scan)
+        self.btp_stopScan = QPushButton(self.grb_operations)
         self.btp_stopScan.setObjectName(u"btp_stopScan")
         self.btp_stopScan.setEnabled(False)
 
-        self.gridLayout.addWidget(self.btp_stopScan, 1, 0, 1, 1)
+        self.verticalLayout_3.addWidget(self.btp_stopScan)
 
-        self.btp_showPointCloud = QPushButton(self.grb_scan)
-        self.btp_showPointCloud.setObjectName(u"btp_showPointCloud")
-        self.btp_showPointCloud.setEnabled(True)
+        self.btp_processData = QPushButton(self.grb_operations)
+        self.btp_processData.setObjectName(u"btp_processData")
+        self.btp_processData.setEnabled(True)
 
-        self.gridLayout.addWidget(self.btp_showPointCloud, 0, 1, 1, 1)
-
-        self.btp_calculateVolume = QPushButton(self.grb_scan)
-        self.btp_calculateVolume.setObjectName(u"btp_calculateVolume")
-        self.btp_calculateVolume.setEnabled(True)
-
-        self.gridLayout.addWidget(self.btp_calculateVolume, 1, 1, 1, 1)
+        self.verticalLayout_3.addWidget(self.btp_processData)
 
 
-        self.horizontalLayout.addWidget(self.grb_scan)
-
-        self.grb_liveScan = QGroupBox(self.centralwidget)
-        self.grb_liveScan.setObjectName(u"grb_liveScan")
-        self.verticalLayout_3 = QVBoxLayout(self.grb_liveScan)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.btp_startLiveScan = QPushButton(self.grb_liveScan)
-        self.btp_startLiveScan.setObjectName(u"btp_startLiveScan")
-
-        self.verticalLayout_3.addWidget(self.btp_startLiveScan)
-
-        self.btp_stopLiveScan = QPushButton(self.grb_liveScan)
-        self.btp_stopLiveScan.setObjectName(u"btp_stopLiveScan")
-        self.btp_stopLiveScan.setEnabled(False)
-
-        self.verticalLayout_3.addWidget(self.btp_stopLiveScan)
-
-
-        self.horizontalLayout.addWidget(self.grb_liveScan)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout.addWidget(self.grb_operations)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.status_bar = QStatusBar(MainWindow)
@@ -136,18 +130,16 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Truckload Volume Calculator", None))
         self.lbl_splash.setText("")
-        self.grb_scansList.setTitle(QCoreApplication.translate("MainWindow", u"Scans List", None))
+        self.grb_scans.setTitle(QCoreApplication.translate("MainWindow", u"Scans", None))
+        self.lbl_search.setText(QCoreApplication.translate("MainWindow", u"Search:", None))
+        self.btp_refreshTable.setText(QCoreApplication.translate("MainWindow", u"Refresh Table", None))
         ___qtablewidgetitem = self.tbw_scans.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"ID", None));
         ___qtablewidgetitem1 = self.tbw_scans.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Volume [cm^3]", None));
-        self.grb_scan.setTitle(QCoreApplication.translate("MainWindow", u"Scan", None))
+        self.grb_operations.setTitle(QCoreApplication.translate("MainWindow", u"Operations", None))
         self.btp_startScan.setText(QCoreApplication.translate("MainWindow", u"Start Scan", None))
         self.btp_stopScan.setText(QCoreApplication.translate("MainWindow", u"Stop Scan", None))
-        self.btp_showPointCloud.setText(QCoreApplication.translate("MainWindow", u"Show Point Cloud", None))
-        self.btp_calculateVolume.setText(QCoreApplication.translate("MainWindow", u"Calculate Volume", None))
-        self.grb_liveScan.setTitle(QCoreApplication.translate("MainWindow", u"Live Scan", None))
-        self.btp_startLiveScan.setText(QCoreApplication.translate("MainWindow", u"Start Live Scan", None))
-        self.btp_stopLiveScan.setText(QCoreApplication.translate("MainWindow", u"Stop Live Scan", None))
+        self.btp_processData.setText(QCoreApplication.translate("MainWindow", u"Process Data", None))
     # retranslateUi
 

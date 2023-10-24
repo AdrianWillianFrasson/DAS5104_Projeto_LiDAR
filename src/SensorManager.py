@@ -1,5 +1,4 @@
 import requests
-# from src.Constants import Constants
 
 
 def get(url: str, params={}):

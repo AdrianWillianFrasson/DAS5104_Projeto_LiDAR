@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QApplication
 from src.interface.MainWindow import MainWindow
 
 sys.path.append("src")
-sys.path.append("src/common")
 sys.path.append("src/interface")
 
 
