@@ -9,8 +9,4 @@ edition = "2021"
 name = "client_tcp"
 path = "./rust/client_tcp.rs"
 
-[[bin]]
-name = "server_udp"
-path = "./rust/server_udp.rs"
-
 [dependencies]
