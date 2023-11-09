@@ -17,7 +17,7 @@ class Constants():
     # Sensors -----------------------------------------------------------------
     SENSOR_TOP_HEIGHT = 2400
 
-    # [x, y, z]
+    # [sensor_x_offset, sensor_y_offset, sensor_z_offset]
     SENSOR_RIGHT_TRANSLATION = (1070, 1160, 0)
     SENSOR_LEFT_TRANSLATION = (1105, -1130, 0)
 
