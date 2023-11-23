@@ -9,6 +9,7 @@ class VolumeCalculator():
     def convex_hull(self, xyz):
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(xyz)
+        pcd.estimate_normals()
 
         hull, _ = pcd.compute_convex_hull()
         hull.orient_triangles()
@@ -20,12 +21,35 @@ class VolumeCalculator():
 
         return volume, hull_ls
 
+    def alpha_shapes(self, xyz):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(xyz)
+        pcd.estimate_normals()
+
+        alpha = 25
+
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd, alpha)
+        mesh.orient_triangles()
+
+        return 1, mesh
+
+    def ball_pivoting(self, xyz):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(xyz)
+        pcd.estimate_normals()
+
+        radii = [50, 25, 30]
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, o3d.utility.DoubleVector(radii))
+
+        # volume = mesh.get_volume()
+
+        return 1, mesh
+
     def delaunay(self, xyz):
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(xyz)
 
-        downpdc = pcd.voxel_down_sample(voxel_size=30)
-        xyz = np.asarray(downpdc.points)
+        xyz = np.asarray(pcd.points)
         xy_catalog = []
 
         for point in xyz:

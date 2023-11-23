@@ -10,8 +10,8 @@ class Reconstructor3D():
 
     def create_point_cloud(self, scan_path: str):
         scans_front = self.process_binary_file(f"{scan_path}{Constants.SENSOR_FRONT_IP}.bin")
-        scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
-        scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
+        # scans_right = self.process_binary_file(f"{scan_path}{Constants.SENSOR_RIGHT_IP}.bin")
+        # scans_left = self.process_binary_file(f"{scan_path}{Constants.SENSOR_LEFT_IP}.bin")
         scans_top = self.process_binary_file(f"{scan_path}{Constants.SENSOR_TOP_IP}.bin")
 
         # ---------------------------------------------------------------------
@@ -25,27 +25,57 @@ class Reconstructor3D():
             Constants.BOUNDARIES_ZAXIS_Y_MAX,
         )
 
-        xyz_right = self.reconstruct_z_axis(scans_right, z_axis)
-        xyz_left = self.reconstruct_z_axis(scans_left, z_axis)
+        # xyz_right = self.reconstruct_z_axis(scans_right, z_axis)
+        # xyz_left = self.reconstruct_z_axis(scans_left, z_axis)
         xyz_top = self.reconstruct_z_axis(scans_top, z_axis)
 
-        xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
-        xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
+        # xyz_right = self.transform(xyz_right, Constants.SENSOR_RIGHT_ROTATION, Constants.SENSOR_RIGHT_TRANSLATION)
+        # xyz_left = self.transform(xyz_left, Constants.SENSOR_LEFT_ROTATION, Constants.SENSOR_LEFT_TRANSLATION)
 
-        # xyz.extend(xyz_front)
-        xyz.extend(xyz_right)
-        xyz.extend(xyz_left)
-        xyz.extend(xyz_top)
+        # xyz_right = self.remove_boundaries(
+        #     xyz_right,
+        #     Constants.BOUNDARIES_PROFILE_X_MIN,
+        #     Constants.BOUNDARIES_PROFILE_X_MAX,
+        #     Constants.BOUNDARIES_PROFILE_Y_MIN,
+        #     Constants.BOUNDARIES_PROFILE_Y_MAX,
+        # )
 
-        xyz = self.remove_boundaries(
-            xyz,
+        # xyz_left = self.remove_boundaries(
+        #     xyz_left,
+        #     Constants.BOUNDARIES_PROFILE_X_MIN,
+        #     Constants.BOUNDARIES_PROFILE_X_MAX,
+        #     Constants.BOUNDARIES_PROFILE_Y_MIN,
+        #     Constants.BOUNDARIES_PROFILE_Y_MAX,
+        # )
+
+        xyz_top = self.remove_boundaries(
+            xyz_top,
             Constants.BOUNDARIES_PROFILE_X_MIN,
             Constants.BOUNDARIES_PROFILE_X_MAX,
             Constants.BOUNDARIES_PROFILE_Y_MIN,
             Constants.BOUNDARIES_PROFILE_Y_MAX,
         )
 
-        xyz = self.filter_point_cloud(xyz)
+        # xyz_top = self.remove_boundaries_3D(
+        #     xyz_top,
+        #     Constants.BOUNDARIES_PROFILE_X_MIN,
+        #     Constants.BOUNDARIES_PROFILE_X_MAX,
+        #     -420,
+        #     0,
+        #     -2400,
+        #     -1750,
+        # )
+
+        # xyz_right = self.filter_point_cloud(xyz_right, 15, 40, 0.1, 25, 50)
+        # xyz_left = self.filter_point_cloud(xyz_left, 15, 40, 0.1, 25, 50)
+        # xyz_top = self.filter_point_cloud(xyz_top, 8, 80, 0.2, 130, 120)
+        xyz_top = self.filter_point_cloud(xyz_top, 15, 60, 0.06, 25, 120)
+
+        # xyz.extend(xyz_front)  # Debug
+        # xyz.extend(xyz_right)
+        # xyz.extend(xyz_left)
+        xyz.extend(xyz_top)
+
         xyz = self.transform(xyz, (0, 0, -pi/2), (0, Constants.SENSOR_TOP_HEIGHT, 0))
 
         # ---------------------------------------------------------------------
@@ -197,11 +227,15 @@ class Reconstructor3D():
     def remove_boundaries(self, points, x_min: int, x_max: int, y_min: int, y_max: int):
         return [p for p in points if not (p[0] <= x_min or p[0] >= x_max or p[1] <= y_min or p[1] >= y_max)]
 
-    def filter_point_cloud(self, points):
+    def remove_boundaries_3D(self, points, x_min, x_max, y_min, y_max, z_min, z_max):
+        return [p for p in points if not (p[0] <= x_min or p[0] >= x_max or p[1] <= y_min or p[1] >= y_max or p[2] <= z_min or p[2] >= z_max)]
+
+    def filter_point_cloud(self, points, voxel_size, nb_neighbors, std_ratio, nb_points, radius):
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(points)
 
-        xyz_1, _ = pcd.remove_radius_outlier(nb_points=10, radius=60)
-        xyz_2, _ = xyz_1.remove_statistical_outlier(nb_neighbors=60, std_ratio=0.7)
+        xyz_1 = pcd.voxel_down_sample(voxel_size=voxel_size)
+        xyz_2, _ = xyz_1.remove_statistical_outlier(nb_neighbors=nb_neighbors, std_ratio=std_ratio)
+        xyz_3, _ = xyz_2.remove_radius_outlier(nb_points=nb_points, radius=radius)
 
-        return np.asarray(xyz_2.points)
+        return np.asarray(xyz_3.points)

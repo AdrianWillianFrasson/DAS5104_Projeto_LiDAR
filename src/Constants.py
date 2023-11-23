@@ -18,7 +18,7 @@ class Constants():
     SENSOR_TOP_HEIGHT = 2400
 
     # [sensor_x_offset, sensor_y_offset, sensor_z_offset]
-    SENSOR_RIGHT_TRANSLATION = (1070, 1160, 0)
+    SENSOR_RIGHT_TRANSLATION = (1070, 1130, 0)
     SENSOR_LEFT_TRANSLATION = (1105, -1130, 0)
 
     # Euler angles [x, y, z]
@@ -33,4 +33,4 @@ class Constants():
     BOUNDARIES_ZAXIS_X_MIN = -2300
     BOUNDARIES_ZAXIS_X_MAX = -400
     BOUNDARIES_ZAXIS_Y_MIN = -7000
-    BOUNDARIES_ZAXIS_Y_MAX = -1750
+    BOUNDARIES_ZAXIS_Y_MAX = -100
