@@ -25,4 +25,4 @@ class PointCloudPlotter():
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(xyz)
 
-        o3d.visualization.draw([pcd, convex_hull, delaunay])
+        o3d.visualization.draw([pcd, delaunay, convex_hull])
